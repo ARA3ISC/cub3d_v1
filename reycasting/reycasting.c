@@ -119,8 +119,52 @@ void get_second_point(t_mlx_data *m)
 
 	m->inf->p.m->x = m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * 30);
 
-	printf("->%d\nstepMovY : %f\nangle : %f\n", m->inf->p.y_direction , m->inf->p.stepMoveY, m->inf->p.rotationAngle);
+	// printf("->%d\nstepMovY : %f\nangle : %f\n", m->inf->p.y_direction , m->inf->p.stepMoveY, m->inf->p.rotationAngle);
+	printf("stepMovY : %f\nstepMoveX : %f\n",m->inf->p.stepMoveY, m->inf->p.stepMoveX);
 	m->inf->p.m->y = m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle) * 30);
+}
+
+void	draw_trace(t_mlx_data *m)
+{
+	int k;
+	int s;
+	double deltaX;
+	double deltaY;
+	double stepX;
+	double stepY;
+	double deltaMax;
+
+
+	k = m->inf->p.stepMoveY;
+	s = m->inf->p.stepMoveX;
+
+	deltaX = fabs(m->inf->p.m->x - m->inf->p.stepMoveX);
+	deltaY = fabs(m->inf->p.m->y - m->inf->p.stepMoveY);
+
+	
+	// if (deltaX > deltaY)
+	// {
+	// 	stepX = deltaX / deltaX;
+	// 	stepY = deltaY / deltaX;
+	// }
+	deltaMax = fmax(deltaX, deltaY);
+
+	stepX = floor(deltaX / deltaMax);
+	stepY = floor(deltaY / deltaMax);
+	int i = 0;
+
+	// deltaY = m->inf->p.stepMoveY;
+	while(i <= deltaMax)
+	{
+		printf("s : %d\nk : %d\n", s, k);
+		printf("stepX : %f\nstepY : %f\n", stepX, stepY);
+		my_mlx_pixel_put(m, s , k, 0xFFFFFF);
+		s += stepX;
+		k += stepY;
+		i++;
+	}
+
+
 }
 
 void drawLine(t_mlx_data *m)
@@ -134,20 +178,26 @@ void drawLine(t_mlx_data *m)
 	k = 0;
 	while(k < m->inf->y_len * 60 )
 	{
+
 		s = 0;
 		if (k == floor(m->inf->p.m->y) - 1 || k == floor(m->inf->p.m->y) || k == floor(m->inf->p.m->y) + 1)
 		{
 			while(s < m->inf->max_len * 60)
 			{
-				if (s == floor(m->inf->p.m->x) - 1 || s == floor(m->inf->p.m->x) || s == floor(m->inf->p.m->x) + 1)
+
+
+				if (s == floor(m->inf->p.m->x)- 1 || s == floor(m->inf->p.m->x) || s == floor(m->inf->p.m->x) + 1)
 				{
 					my_mlx_pixel_put(m, s , k, 0xFFFFFF);
 				}
+			
 				s++;
 			}
 		}
 		k++;
 	}
+	draw_trace(m);
+
 }
 
 
@@ -174,9 +224,9 @@ void	drawPlayer(t_mlx_data *m, int x, int y)
 			{
 				if (s == m->inf->p.stepMoveX - 1 || s == m->inf->p.stepMoveX  || s == m->inf->p.stepMoveX + 1)
 				{
-					my_mlx_pixel_put(m, s , k, 0xFFFFFF);
+					// my_mlx_pixel_put(m, s , k, 0xFFFFFF);
 
-					// circle(m, m->inf->p.stepMoveX, m->inf->p.stepMoveY, 3, 0xFFFFFF);
+					circle(m, m->inf->p.stepMoveX, m->inf->p.stepMoveY, 3, 0xFFFFFF);
 				}
 				s++;
 			}
