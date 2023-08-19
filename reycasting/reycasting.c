@@ -78,6 +78,32 @@ void	drawSquare(t_mlx_data *m, int x, int y)
 	}
 
 }
+
+void	initailize_directions(t_mlx_data *m)
+{
+	if (m->inf->map2d[(int)m->inf->p.y][(int)m->inf->p.x] == 'N')
+	{
+		m->inf->p.rotationAngle = M_PI / 2;
+		m->inf->p.y_direction = -1;
+	}
+	else if (m->inf->map2d[(int)m->inf->p.y][(int)m->inf->p.x] == 'S')
+	{
+		printf("dkhl\n");
+		m->inf->p.rotationAngle = 3 * M_PI / 2;
+		m->inf->p.y_direction = 1;
+	}
+	else if (m->inf->map2d[(int)m->inf->p.y][(int)m->inf->p.x] == 'E')
+	{
+		m->inf->p.rotationAngle = 0;
+		m->inf->p.x_direction = 1;
+	}
+	else if (m->inf->map2d[(int)m->inf->p.y][(int)m->inf->p.x] == 'W')
+	{
+		m->inf->p.rotationAngle = M_PI;
+		m->inf->p.x_direction = -1;
+	}
+}
+
 void get_second_point(t_mlx_data *m)
 {
 	if (m->inf->p.rotationAngle < (M_PI / 2) && m->inf->p.rotationAngle > ((M_PI * 3) / 2))
@@ -90,8 +116,11 @@ void get_second_point(t_mlx_data *m)
 	if (m->inf->p.rotationAngle < M_PI && m->inf->p.rotationAngle > 0)
 		m->inf->p.y_direction = -1;
 
-	m->inf->p.m->x = m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * 30) * m->inf->p.x_direction;
-	m->inf->p.m->y = m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * 30) * m->inf->p.y_direction;
+
+	m->inf->p.m->x = m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * 30);
+
+	printf("->%d\nstepMovY : %f\nangle : %f\n", m->inf->p.y_direction , m->inf->p.stepMoveY, m->inf->p.rotationAngle);
+	m->inf->p.m->y = m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle) * 30);
 }
 
 void drawLine(t_mlx_data *m)
@@ -101,15 +130,16 @@ void drawLine(t_mlx_data *m)
 
 	get_second_point(m);
 	printf("mx : %f\nmy : %f\n",m->inf->p.m->x, m->inf->p.m->y);
+	printf("angle : %f\n", m->inf->p.rotationAngle);
 	k = 0;
 	while(k < m->inf->y_len * 60 )
 	{
 		s = 0;
-		if (k == m->inf->p.m->y - 1 || k == m->inf->p.m->y || k == m->inf->p.m->y + 1)
+		if (k == floor(m->inf->p.m->y) - 1 || k == floor(m->inf->p.m->y) || k == floor(m->inf->p.m->y) + 1)
 		{
 			while(s < m->inf->max_len * 60)
 			{
-				if (s == m->inf->p.m->x - 1 || s == m->inf->p.m->x || s == m->inf->p.m->x + 1)
+				if (s == floor(m->inf->p.m->x) - 1 || s == floor(m->inf->p.m->x) || s == floor(m->inf->p.m->x) + 1)
 				{
 					my_mlx_pixel_put(m, s , k, 0xFFFFFF);
 				}
@@ -219,7 +249,7 @@ int	keyRelease(int keycode, t_mlx_data *m)
 
 int	move(int keycode, t_mlx_data *m)
 {
-	printf("%d\n", keycode);
+	printf("uuuuu %d\n", keycode);
 	if (keycode == ESC)
 	{
 		printf("You closed the game using ESC key !");
@@ -265,15 +295,21 @@ int	move(int keycode, t_mlx_data *m)
 	if (keycode == LEFT)
 	{
 		printf("hahaha\n");
-		m->inf->p.rotationAngle += M_PI / 8;
+		m->inf->p.rotationAngle += M_PI / 16;
+	}
+	if (keycode == RIGHT)
+	{
+		printf("hahaha\n");
+		m->inf->p.rotationAngle -= M_PI / 16;
 	}
 
+	// printf("NewAngle : %f\n2*PI : %f\n", m->inf->p.rotationAngle, 2 * M_PI);
+	if (m->inf->p.rotationAngle >= 2 * M_PI)
+		m->inf->p.rotationAngle = 0;
 	displayMap(m, m->inf);
-
 	m->inf->p.x_direction = 0;
 	m->inf->p.y_direction = 0;
-	if (m->inf->p.rotationAngle == 2 * M_PI)
-		m->inf->p.rotationAngle = 0;
+
 	// drawPlayer(m, m->inf->p.y , m->inf->p.x );
 	return 0;
 }
@@ -359,7 +395,6 @@ void	reycasting(t_infos *inf)
 	inf->p.y_direction = 0;
 	// ! N E W S
 	inf->p.rotationAngle = 0;
-
 	mlx.inf = inf;
 	mlx.map2d = inf->map2d;
 
@@ -375,6 +410,8 @@ void	reycasting(t_infos *inf)
 	mlx.inf->p.y_tmp = mlx.inf->p.y + 0.5;
 	mlx.inf->p.stepMoveX = mlx.inf->p.x * 60;
 	mlx.inf->p.stepMoveY = mlx.inf->p.y * 60;
+	
+	initailize_directions(&mlx);
 	displayMap(&mlx, inf);
 
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);

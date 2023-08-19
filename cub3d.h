@@ -38,7 +38,7 @@
 # define D 100
 # define A 97
 # define S 115
-# define RIGHT 124
+# define RIGHT 65363
 # define LEFT 65361
 # define UP 126
 # define DOWN 125
@@ -60,6 +60,8 @@ typedef struct s_player
 	double	y_tmp;
 	double stepMoveX;
 	double stepMoveY;
+
+	char direction;
 
 	int x_direction;
 	int y_direction;
