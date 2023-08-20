@@ -6,7 +6,7 @@
 /*   By: maneddam <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 14:35:47 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/19 21:03:12 by maneddam         ###   ########.fr       */
+/*   Updated: 2023/08/20 19:12:45 by maneddam         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -104,7 +104,7 @@ void	initailize_directions(t_mlx_data *m)
 	}
 }
 
-void get_second_point(t_mlx_data *m, int i)
+void get_second_point(t_mlx_data *m, int i, double beta)
 {
 	if (m->inf->p.rotationAngle < (M_PI / 2) && m->inf->p.rotationAngle > ((M_PI * 3) / 2))
 		m->inf->p.x_direction = 1;
@@ -117,11 +117,11 @@ void get_second_point(t_mlx_data *m, int i)
 		m->inf->p.y_direction = -1;
 
 
-	m->inf->p.m->x = m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * i);
+	m->inf->p.m->x = m->inf->p.stepMoveX + (cos(beta) * i);
 
-	// printf("->%d\nstepMovY : %f\nangle : %f\n", m->inf->p.y_direction , m->inf->p.stepMoveY, m->inf->p.rotationAngle);
+	// printf("->%d\nstepMovget_second_pointY : %f\nangle : %f\n", m->inf->p.y_direction , m->inf->p.stepMoveY, beta);
 	// printf("stepMovY : %f\nstepMoveX : %f\n",m->inf->p.stepMoveY, m->inf->p.stepMoveX);
-	m->inf->p.m->y = m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle) * i);
+	m->inf->p.m->y = m->inf->p.stepMoveY - (sin(beta) * i);
 }
 
 // void	draw_trace(t_mlx_data *m)
@@ -191,14 +191,16 @@ void draw_trace(t_mlx_data *m)
 	}
 }
 
-void drawLine(t_mlx_data *m)
+void drawLine(t_mlx_data *m, double beta)
 {
 	int s;
 	int k;
 	int i = 0;
-	while(i < 30)
+	// while(i < 30)
+		get_second_point(m, 0, m->inf->p.rotationAngle);
+	while(!hasWallat(m, m->inf->p.m->x +2 * m->inf->p.x_direction, m->inf->p.m->y + 2* m->inf->p.y_direction))
 	{
-		get_second_point(m, i);
+		get_second_point(m, i, beta);
 		k = 0;
 		while(k < m->inf->y_len * 60 )
 		{
@@ -208,11 +210,9 @@ void drawLine(t_mlx_data *m)
 			{
 				while(s < m->inf->max_len * 60)
 				{
-
-
 					if (s == (int)(m->inf->p.m->x))
 					{
-						my_mlx_pixel_put(m, s , k, 0xFFFFFF);
+						my_mlx_pixel_put(m, s , k, 0xf9ff79);
 					}
 
 					s++;
@@ -264,7 +264,20 @@ void	drawPlayer(t_mlx_data *m, int x, int y)
 
 
 
-	drawLine(m);
+	s = 0;
+	// int temp = (M_PI / 3) / (m->inf->max_len * 60);
+
+	double beta = m->inf->p.rotationAngle - (30 * M_PI) / 180;
+
+	while(s < m->inf->max_len * 20)
+	{
+		drawLine(m, beta);
+		if (beta >= m->inf->p.rotationAngle + (30 * M_PI) / 180)
+			break;
+		beta += M_PI / (3 * m->inf->max_len * 20);
+		s++;
+	}
+	// drawRay
 
 }
 
@@ -317,6 +330,7 @@ bool hasWallat(t_mlx_data *m, double x, double y)
 	gridY = (int)(y / 60);
 	return m->inf->map2d[gridY][gridX] == '1';
 }
+
 int	keyRelease(int keycode, t_mlx_data *m)
 {
 	(void)keycode;
@@ -336,7 +350,8 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == W)
 	{
-		if (hasWallat(m, m->inf->p.stepMoveX, m->inf->p.stepMoveY - (SPEED + 1)))
+		printf("px : %f\npy : %f\n", m->inf->p.stepMoveX, m->inf->p.stepMoveY);
+		if (hasWallat(m, m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * (SPEED)), m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle) * (SPEED))))
 		{
 			printf("WALL\n");
 			return 0;
@@ -345,13 +360,12 @@ int	move(int keycode, t_mlx_data *m)
 		m->inf->p.stepMoveY -= (sin(m->inf->p.rotationAngle) * (SPEED));
 		m->inf->p.stepMoveX += (cos(m->inf->p.rotationAngle) * (SPEED));
 		// printf("angle : %f\n", m->inf->p.rotationAngle);
-		// printf("px : %f\npy : %f\n", m->inf->p.stepMoveX, m->inf->p.stepMoveY);
 		// printf("must return 0 : %f\n", (sin(m->inf->p.rotationAngle) * (SPEED)));
 		// printf("must not return 314: %f\n",  m->inf->p.stepMoveY);
 	}
 	if (keycode == S)
 	{
-		if (hasWallat(m, m->inf->p.stepMoveX, m->inf->p.stepMoveY + SPEED))
+		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)), m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED))))
 		{
 			printf("WALL\n");
 			return 0;
@@ -363,7 +377,7 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == D)
 	{
-		if (hasWallat(m, m->inf->p.stepMoveX + SPEED, m->inf->p.stepMoveY))
+		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED)), m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED))))
 		{
 			printf("WALL\n");
 			return 0;
@@ -375,7 +389,7 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == A)
 	{
-		if (hasWallat(m, m->inf->p.stepMoveX - (SPEED + 1), m->inf->p.stepMoveY))
+		if (hasWallat(m, m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED)), m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED))))
 		{
 			printf("WALL\n");
 			return 0;
@@ -385,13 +399,12 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == LEFT)
 	{
-		printf("hahaha\n");
-		m->inf->p.rotationAngle += M_PI / 16;
+		m->inf->p.rotationAngle += M_PI / 80;
 	}
 	if (keycode == RIGHT)
 	{
 		printf("hahaha\n");
-		m->inf->p.rotationAngle -= M_PI / 16;
+		m->inf->p.rotationAngle -= M_PI / 80;
 	}
 
 	// printf("NewAngle : %f\n2*PI : %f\n", m->inf->p.rotationAngle, 2 * M_PI);
@@ -506,7 +519,7 @@ void	reycasting(t_infos *inf)
 	displayMap(&mlx, inf);
 
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);
-	// mlx_hook(mlx.wind_ptr, 3, 1L<<1, keyRelease, &mlx);
+	// mlx_hook(mlx.wind_ptr, 2, 1L<<1, keyRelease, &mlx);
 	mlx_loop(mlx.mlx_ptr);
 
 }

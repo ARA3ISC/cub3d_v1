@@ -135,4 +135,5 @@ char			**reFormeMap(char **map2d, t_infos *infos);
 
 void			reycasting(t_infos *inf);
 t_player	player_pos(char **table_2d);
+bool hasWallat(t_mlx_data *m, double x, double y);
 #endif
