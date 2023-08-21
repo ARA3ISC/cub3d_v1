@@ -42,7 +42,7 @@
 # define LEFT 65361
 # define UP 126
 # define DOWN 125
-# define SPEED 5
+# define SPEED 3
 
 typedef struct s_point
 {
@@ -136,4 +136,5 @@ char			**reFormeMap(char **map2d, t_infos *infos);
 void			reycasting(t_infos *inf);
 t_player	player_pos(char **table_2d);
 bool hasWallat(t_mlx_data *m, double x, double y);
+bool hasWallat_for_line(t_mlx_data *m, double x, double y);
 #endif
