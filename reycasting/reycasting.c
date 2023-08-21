@@ -116,11 +116,11 @@ void get_second_point(t_mlx_data *m, int i, double beta)
 	if (m->inf->p.rotationAngle < M_PI && m->inf->p.rotationAngle > 0)
 		m->inf->p.y_direction = -1;
 
-
+// printf("XPlayer : %f\n",m->inf->p.m->x);
 	m->inf->p.m->x = m->inf->p.stepMoveX + (cos(beta) * i);
 
-	// printf("->%d\nstepMovget_second_pointY : %f\nangle : %f\n", m->inf->p.y_direction , m->inf->p.stepMoveY, beta);
-	// printf("stepMovY : %f\nstepMoveX : %f\n",m->inf->p.stepMoveY, m->inf->p.stepMoveX);
+	// // printf("->%d\nstepMovget_second_pointY : %f\nangle : %f\n", m->inf->p.y_direction , m->inf->p.stepMoveY, beta);
+	// // printf("stepMovY : %f\nstepMoveX : %f\n",m->inf->p.stepMoveY, m->inf->p.stepMoveX);
 	m->inf->p.m->y = m->inf->p.stepMoveY - (sin(beta) * i);
 }
 
@@ -191,38 +191,73 @@ void draw_trace(t_mlx_data *m)
 	}
 }
 
-void drawLine(t_mlx_data *m, double beta)
+void draw_wall(t_mlx_data *m, double wall_heigth, int s)
 {
-	int s;
-	int k;
+	double inc;
+	printf("heigth : %f\n", wall_heigth);
+	inc = 0;
+	while (inc < wall_heigth / 2 )
+	{
+		my_mlx_pixel_put(m, s, 700 / 2 - inc, 0xE0D8D1);
+		inc++;
+	}
+	inc  = 0;
+	while (inc < wall_heigth / 2)
+	{
+		my_mlx_pixel_put(m, s, 700 / 2 + inc, 0xE0D8D1);
+		inc++;
+	}
+	
+}
+
+void drawLine(t_mlx_data *m, double beta, int s)
+{
 	int i = 0;
+	// int k;
+	(void)s;
+	double ray_distance;
+	double wall_heigth;
+	// double dis_to_v_wall;
 	// while(i < 30)
-	get_second_point(m, 0, m->inf->p.rotationAngle);
+	// printf("beta : %f\n", beta);
+	get_second_point(m, 0, beta);
 	while(!hasWallat_for_line(m, m->inf->p.m->x + 2 , m->inf->p.m->y + 2))
 	{
 		// printf("i : %d\n", i);
 		get_second_point(m, i, beta);
-		k = 0;
-		while(k < m->inf->y_len * 60)
-		{
+		// k = 0;
+		// while(k < m->inf->y_len * 60)
+		// {
 
-			s = 0;
-			if (k == (int)(m->inf->p.m->y))
-			{
-				while(s < m->inf->max_len * 60)
-				{
-					if (s == (int)(m->inf->p.m->x))
-					{
-						my_mlx_pixel_put(m, s , k, 0xf9ff79);
-					}
+		// 	s = 0;
+		// 	if (k == (int)(m->inf->p.m->y))
+		// 	{
+		// 		while(s < m->inf->max_len * 60)
+		// 		{
+		// 			if (s == (int)(m->inf->p.m->x))
+		// 			{
+		// 				my_mlx_pixel_put(m, s , k, 0xf9ff79);
+		// 			}
 
-					s++;
-				}
-			}
-			k++;
-		}
+		// 			s++;
+		// 		}
+		// 	}
+		// 	k++;
+		// }
 		i++;
 	}
+	ray_distance = sqrt(pow(m->inf->p.m->x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m->y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle) ;
+	// dis_to_v_wall = 1300 / (2 * tan(M_PI/6));
+	wall_heigth = (1300 * 60)/(2 * (tan(M_PI/6) * ray_distance));
+	// wall_heigth = (60/ray_distance) * dis_to_v_wall;
+	if(wall_heigth < 0)
+		wall_heigth = 0;
+	if(wall_heigth > 700)
+		wall_heigth = 700;
+	
+	draw_wall(m, wall_heigth, s);
+
+	// printf("distance : %f\n", ray_distance);
 	// printf("mx : %f\nmy : %f\n",m->inf->p.m->x, m->inf->p.m->y);
 	// printf("angle : %f\n", m->inf->p.rotationAngle);
 	// draw_trace(m);
@@ -237,7 +272,7 @@ void	drawPlayer(t_mlx_data *m, int x, int y)
 	(void)x;
 	(void)y;
 	// int	color;
-	// int middleX;
+	// int middleX;m->inf->p.m->x
 	// int middleY;
 	// color = encode_rgb(0, 255, 128);
 	// middleX = m->inf->max_len * 60/2;
@@ -273,12 +308,13 @@ void	drawPlayer(t_mlx_data *m, int x, int y)
 	
 	while(s < m->inf->max_len * 20)
 	{
-		drawLine(m, beta);
+		drawLine(m, beta, s);
 		if (beta >= m->inf->p.rotationAngle + (30 * M_PI) / 180)
 			break;
 		beta += M_PI / (3 * m->inf->max_len * 20);
 		s++;
 	}
+
 	// drawRay
 
 }
@@ -376,6 +412,57 @@ int	keyRelease(int keycode, t_mlx_data *m)
 	return 0;
 }
 
+void render3d(t_mlx_data *m)
+{
+	int i = 0;
+	int j = 0;
+	int s;
+
+	mlx_destroy_image(m->mlx_ptr, m->img_ptr);
+	m->img_ptr = mlx_new_image(m->mlx_ptr, 1300, 700);
+	m->addr = mlx_get_data_addr(m->img_ptr, &m->bits_per_pixel, &m->line_length, &m->endian);
+	
+
+	while(i < 700)
+	{
+		j = 0;
+		while(j < 1300)
+		{
+			if(i > 350)
+				my_mlx_pixel_put(m, j, i, rgb_to_hex(m->inf->F[0], m->inf->F[1], m->inf->F[2]));
+			else
+				my_mlx_pixel_put(m, j, i, rgb_to_hex(m->inf->C[0], m->inf->C[1], m->inf->C[2]));
+				// my_mlx_pixel_put(m, j, i, WALL);
+
+			j++;
+		}
+		i++;
+	}
+	
+	
+
+	s = 0;
+	// int temp = (M_PI / 3) / (m->inf->max_len * 60);
+	
+	double beta = m->inf->p.rotationAngle - M_PI / 6;
+	// double beta = m->inf->p.rotationAngle;
+	
+	// printf("------------------------------------------------------------");
+	while(s < 1300)
+	{
+		drawLine(m, beta,s);
+		// printf("jkkkkjjj\n");
+		if (beta >= m->inf->p.rotationAngle + M_PI / 6)
+			break;
+		beta += M_PI / (3 * 1300 );
+		s++;
+	}
+	
+	mlx_put_image_to_window(m->mlx_ptr, m->wind_ptr, m->img_ptr, 0, 0);
+
+}
+
+
 int	move(int keycode, t_mlx_data *m)
 {
 	// printf("uuuuu %d\n", keycode);
@@ -442,14 +529,15 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == RIGHT)
 	{
-		printf("hahaha\n");
+		// printf("hahaha\n");
 		m->inf->p.rotationAngle -= M_PI / 80;
 	}
 
 	// printf("NewAngle : %f\n2*PI : %f\n", m->inf->p.rotationAngle, 2 * M_PI);
 	if (m->inf->p.rotationAngle > 2 * M_PI)
 		m->inf->p.rotationAngle = 0;
-	displayMap(m, m->inf);
+	// displayMap(m, m->inf);
+	render3d(m);
 	// m->inf->p.x_direction = 0;
 	// m->inf->p.y_direction = 0;
 
@@ -508,7 +596,7 @@ void draw_rays(t_mlx_data *mlx)
 	j = (int)mlx->inf->p.x_tmp;
 	double d = get_decimal_number(mlx->inf->p.x_tmp);
 	double r = get_decimal_number(mlx->inf->p.y_tmp);
-	printf("x :: %f\ny :: %f\n", mlx->inf->p.x_tmp, mlx->inf->p.y_tmp);
+	// printf("x :: %f\ny :: %f\n", mlx->inf->p.x_tmp, mlx->inf->p.y_tmp);
 		k = 0;
 		while (k < 60)
 		{
@@ -528,8 +616,8 @@ void draw_rays(t_mlx_data *mlx)
 		}
 }
 
+
 void	reycasting(t_infos *inf)
-	// 	return true;
 {
 	t_mlx_data	mlx;
 
@@ -545,18 +633,17 @@ void	reycasting(t_infos *inf)
 
 	// printf("x) %f\ny) %f\n", inf->p.x, inf->p.y);
 
-	mlx.wind_ptr = mlx_new_window(mlx.mlx_ptr, inf->max_len * 60, inf->y_len * 60, "cub3d");
-	mlx.img_ptr = mlx_new_image(mlx.mlx_ptr, inf->max_len * 60, inf->y_len * 60);
+	mlx.wind_ptr = mlx_new_window(mlx.mlx_ptr, 1300,  700, "cub3d");
+	mlx.img_ptr = mlx_new_image(mlx.mlx_ptr, 1300,  700);
 	mlx.addr = mlx_get_data_addr(mlx.img_ptr, &mlx.bits_per_pixel, &mlx.line_length, &mlx.endian);
 
-	mlx.inf->p.x_tmp = mlx.inf->p.x + 0.5;
-	mlx.inf->p.y_tmp = mlx.inf->p.y + 0.5;
 	mlx.inf->p.stepMoveX = mlx.inf->p.x * 60;
 	mlx.inf->p.stepMoveY = mlx.inf->p.y * 60;
 
 	initailize_directions(&mlx);
-	displayMap(&mlx, inf);
-
+	mlx.inf = inf;
+	render3d(&mlx);
+	// displayMap(&mlx, inf);
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);
 	// mlx_hook(mlx.wind_ptr, 2, 1L<<1, keyRelease, &mlx);
 	mlx_loop(mlx.mlx_ptr);

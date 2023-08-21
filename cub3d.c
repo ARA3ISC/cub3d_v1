@@ -39,8 +39,8 @@ int	main(int argc, char *argv[])
 		// printf("SO : %s*\n", infos.SO);
 		// printf("WE : %s*\n", infos.WE);
 		// printf("EA : %s*\n", infos.EA);
-		// printf("F : %d|%d|%d*\n", infos.F[0], infos.F[1], infos.F[2]);
-		// printf("C : %d|%d|%d*\n", infos.C[0], infos.C[1], infos.C[2]);
+		printf("F : %x*\n", rgb_to_hex(infos.F[0], infos.F[1], infos.F[2]));
+		printf("C : %x*\n", rgb_to_hex(infos.C[0], infos.C[1], infos.C[2]));
 	}
 	else
 		printError("Invalid argument number");

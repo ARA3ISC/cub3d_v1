@@ -29,7 +29,7 @@
 # define RED "\033[0;31m"
 
 # define SPACE 0x2BE3E8
-# define WALL 0xFA5424
+# define WALL 0x900C3F
 # define PLAYER 0x2CA0F6
 
 
@@ -137,4 +137,5 @@ void			reycasting(t_infos *inf);
 t_player	player_pos(char **table_2d);
 bool hasWallat(t_mlx_data *m, double x, double y);
 bool hasWallat_for_line(t_mlx_data *m, double x, double y);
+int rgb_to_hex(int red, int green, int blue);
 #endif
