@@ -20,6 +20,10 @@ void	my_mlx_pixel_put(t_mlx_data *data, int x, int y, int color)
 {
 	char	*dst;
 
+	if(y > 700)
+		return ;
+	if(y < 0)
+		return ;
 	dst = data->addr + (y * data->line_length + x * (data->bits_per_pixel / 8));
 	*(unsigned int*)dst = color;
 }
@@ -191,22 +195,39 @@ void draw_trace(t_mlx_data *m)
 	}
 }
 
+int		getXpmPixel(t_mlx_data *data, int x, int y)
+{
+	char	*dst;
+
+	dst = data->inf->txts[0].addr + (y * data->inf->txts[0].line_length + x * (data->inf->txts[0].bits_per_pixel / 8));
+	// printf(RED"*********************\n"RESET);
+	return *(unsigned int*)dst;
+}
+
 void draw_wall(t_mlx_data *m, double wall_heigth, int s)
 {
 	double inc;
 	printf("heigth : %f\n", wall_heigth);
 	inc = 0;
-	while (inc < wall_heigth / 2 )
+	int j = 700 / 2 - wall_heigth / 2;
+	// int y = 0;
+	double k = 0;
+	while (inc < wall_heigth)
 	{
-		my_mlx_pixel_put(m, s, 700 / 2 - inc, 0xE0D8D1);
+		my_mlx_pixel_put(m, s, j +  inc, getXpmPixel(m, s, k));
+		// k += 0.9;
+		k = (j +  inc) / ((double)wall_heigth * (double)m->inf->txts[0].height);
+		// printf("k : % f %f %d \n", k, wall_heigth, m->inf->txts[0].height);
+		if (k >= m->inf->txts[0].height)
+			break;
 		inc++;
 	}
-	inc  = 0;
-	while (inc < wall_heigth / 2)
-	{
-		my_mlx_pixel_put(m, s, 700 / 2 + inc, 0xE0D8D1);
-		inc++;
-	}
+	// inc  = 0;
+	// while (inc < wall_heigth / 2)
+	// {
+	// 	my_mlx_pixel_put(m, s, 700 / 2 + inc, getXpmPixel(m, s, 700 / 2 + inc));
+	// 	inc++;
+	// }
 	
 }
 
@@ -221,6 +242,9 @@ void drawLine(t_mlx_data *m, double beta, int s)
 	// while(i < 30)
 	// printf("beta : %f\n", beta);
 	get_second_point(m, 0, beta);
+
+
+
 	while(!hasWallat_for_line(m, m->inf->p.m->x + 2 , m->inf->p.m->y + 2))
 	{
 		// printf("i : %d\n", i);
@@ -616,6 +640,23 @@ void draw_rays(t_mlx_data *mlx)
 		}
 }
 
+void	getTextures(t_mlx_data *m)
+{
+	int i = 0;
+	while (i < 4)
+	{
+		m->inf->txts[i].img_ptr = mlx_xpm_file_to_image(m->mlx_ptr, "./textures/wall1.xpm",
+			&m->inf->txts[i].width, &m->inf->txts[i].height);
+		
+		if (!m->inf->txts[i].img_ptr)
+			printError("xpm corrupted");
+		
+		m->inf->txts[i].addr = mlx_get_data_addr(m->inf->txts[i].img_ptr,
+			&m->inf->txts[i].bits_per_pixel, &m->inf->txts[i].line_length, &m->inf->txts[i].endian);
+		i++;
+	}
+
+}
 
 void	reycasting(t_infos *inf)
 {
@@ -636,6 +677,10 @@ void	reycasting(t_infos *inf)
 	mlx.wind_ptr = mlx_new_window(mlx.mlx_ptr, 1300,  700, "cub3d");
 	mlx.img_ptr = mlx_new_image(mlx.mlx_ptr, 1300,  700);
 	mlx.addr = mlx_get_data_addr(mlx.img_ptr, &mlx.bits_per_pixel, &mlx.line_length, &mlx.endian);
+
+
+	// mlx.inf->txts = malloc(4 * sizeof(t_texts));
+	getTextures(&mlx);
 
 	mlx.inf->p.stepMoveX = mlx.inf->p.x * 60;
 	mlx.inf->p.stepMoveY = mlx.inf->p.y * 60;

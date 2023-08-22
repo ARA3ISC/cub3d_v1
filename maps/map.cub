@@ -1,18 +1,18 @@
-F   129,78,32
 
-NO 	r
+NO 	./textures/wall1.xpm
 SO ./path_to_the_south_texture
-WE ./path_to_the_west_texture
+WE .    
 
 EA ./path_to_the_east_texture
 
 C 84,		136	,  227
+F   129,78,32
 
 
 111111111111
 1000000S0011
 100000000011
-100011100011111
+100011111111111
 1000000000000011
 1000000100110101
 1000000000110011

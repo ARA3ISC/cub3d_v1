@@ -160,5 +160,5 @@ void parsing(char *argv, t_infos *infos)
 	infos->p.y_startPos = 0;
 	checkArg(argv);
 	getFileElements(argv, infos);
-
+	
 }

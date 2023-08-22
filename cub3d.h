@@ -84,6 +84,18 @@ typedef struct s_mlx_data
 
 }				t_mlx_data;
 
+typedef struct s_texts
+{
+	void		*mlx_ptr;
+	void		*img_ptr;
+	int			width;
+	int			height;
+	int		bits_per_pixel;
+	int		line_length;
+	int		endian;
+	char	*addr;
+}			t_texts;
+
 typedef struct s_infos
 {
 	char		*NO;
@@ -101,7 +113,11 @@ typedef struct s_infos
 	int			y_len;
 	int			max_len;
 	int			index_max_len;
+
+	
 	t_player	p;
+
+	t_texts		txts[4];
 
 	// int y_len;
 }				t_infos;
