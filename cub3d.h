@@ -48,6 +48,8 @@ typedef struct s_point
 {
 	double x;
 	double y;
+	bool vertical;
+	bool horizontal;
 }	t_point;
 
 typedef struct s_player
@@ -122,7 +124,8 @@ typedef struct s_infos
 	// int y_len;
 }				t_infos;
 
-void 			draw_rays(t_mlx_data *mlx);
+void			draw_rays(t_mlx_data *m, double beta, int s);
+
 void			printError(char *msg);
 void			parsing(char *argv, t_infos *infos);
 char			*get_next_line(int fd);
