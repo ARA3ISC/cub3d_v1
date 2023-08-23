@@ -110,18 +110,20 @@ void	initailize_directions(t_mlx_data *m)
 
 void get_second_point(t_mlx_data *m, int i, double beta)
 {
-	if (m->inf->p.rotationAngle < (M_PI / 2) && m->inf->p.rotationAngle > ((M_PI * 3) / 2))
+	if (beta < (M_PI / 2) ||  beta > ((M_PI * 3) / 2))
 		m->inf->p.x_direction = 1;
-	if (m->inf->p.rotationAngle < (3 * M_PI / 2) && m->inf->p.rotationAngle > (M_PI / 2))
+	if (beta < (3 * M_PI / 2) && beta > (M_PI / 2))
 		m->inf->p.x_direction = -1;
 
-	if (m->inf->p.rotationAngle < (M_PI * 2) && m->inf->p.rotationAngle > (M_PI))
+	if (beta < (M_PI * 2) && beta > (M_PI))
 		m->inf->p.y_direction = 1;
-	if (m->inf->p.rotationAngle < M_PI && m->inf->p.rotationAngle > 0)
+	if (beta < M_PI && beta > 0)
 		m->inf->p.y_direction = -1;
 
-	m->inf->p.m->x = m->inf->p.stepMoveX + (cos(beta) * i);
-	m->inf->p.m->y = m->inf->p.stepMoveY - (sin(beta) * i);
+
+	
+	m->inf->p.m.x = m->inf->p.stepMoveX + (cos(beta) * i);
+	m->inf->p.m.y = m->inf->p.stepMoveY - (sin(beta) * i);
 
 
 }
@@ -140,8 +142,8 @@ void get_second_point(t_mlx_data *m, int i, double beta)
 // 	k = m->inf->p.stepMoveY;
 // 	s = m->inf->p.stepMoveX;
 
-// 	deltaX = fabs(m->inf->p.m->x - m->inf->p.stepMoveX);
-// 	deltaY = fabs(m->inf->p.m->y - m->inf->p.stepMoveY);
+// 	deltaX = fabs(m->inf->p.m.x - m->inf->p.stepMoveX);
+// 	deltaY = fabs(m->inf->p.m.y - m->inf->p.stepMoveY);
 
 
 // 	// if (deltaX > deltaY)
@@ -205,24 +207,23 @@ int		getXpmPixel(t_mlx_data *data, int x, int y)
 
 int get_column(t_mlx_data *m)
 {
-	// if (m->inf->p.m->horizontal)
-	// {
-		// printf("horizontal\n");
-		// return ((double)(((int)(m->inf->p.m->y + 0.5)) % 60)/60) * m->inf->txts[0].width;
-	// }
-	// else 
-	if (m->inf->p.m->vertical)
+	if (m->inf->p.m.vertical)
 	{
-	// 	printf("verticaljjjj\n");
-		return ((double)(((int)(m->inf->p.m->x + 0.5)) % 60)/60) * m->inf->txts[0].width;
+		// printf("horizontaljjj\n");
+		return ((double)(((int)(m->inf->p.m.y + 0.5)) % 60)/60) * m->inf->txts[0].width;
+	}
+	else if (m->inf->p.m.horizontal)
+	{
+		// printf("verticaljjjj\n");
+		return ((double)(((int)(m->inf->p.m.x + 0.5)) % 60)/60) * m->inf->txts[0].width;
 	}
 	return 0;
 
-	// if((int)(m->inf->p.m->y + 0.5) % 60 == 0)
-	// if((int)(m->inf->p.m->x + 0.5) % 60 == 0)
+	// if((int)(m->inf->p.m.y + 0.5) % 60 == 0)
+	// if((int)(m->inf->p.m.x + 0.5) % 60 == 0)
 		
-	// int x = (((int)(m->inf->p.m->x + 0.5)) % 60);
-	// int y = (((int)(m->inf->p.m->y + 0.5)) % 60);
+	// int x = (((int)(m->inf->p.m.x + 0.5)) % 60);
+	// int y = (((int)(m->inf->p.m.y + 0.5)) % 60);
 
 	// if(x >= y)
 	// 	return ((double)(x)/60) * m->inf->txts[0].width;
@@ -239,7 +240,7 @@ void draw_wall(t_mlx_data *m, double wall_heigth, int s)
 		// double x = s * (m->inf->txts[0].width / wall_heigth);
 
 	
-	// int x = (m->inf->p.m->x/60 - (int)(m->inf->p.m->x / 60))* m->inf->txts[0].width;
+	// int x = (m->inf->p.m.x/60 - (int)(m->inf->p.m.x / 60))* m->inf->txts[0].width;
 	double c = m->inf->txts[0].height / wall_heigth ;
 	// double r = m->inf->txts[0].width / wall_heigth;
 	
@@ -260,22 +261,23 @@ void draw_rays(t_mlx_data *m, double beta, int s)
 	int i = 0;
 	int k;
 	get_second_point(m, 0, beta);
-	while(!hasWallat_for_line(m, m->inf->p.m->x  , m->inf->p.m->y ))
+	// printf("angle : %f\n", beta * 180/M_PI ) ;
+	while(!hasWallat_for_line(m, m->inf->p.m.x  , m->inf->p.m.y ))
 	{
 
 		get_second_point(m, i, beta);
-		if(hasWallat_for_line(m, m->inf->p.m->x + m->inf->p.x_direction , m->inf->p.m->y  + m->inf->p.y_direction))
+		if(hasWallat_for_line(m, m->inf->p.m.x + m->inf->p.x_direction , m->inf->p.m.y  + m->inf->p.y_direction))
 			break;
 		
 		k = 0;
 		while(k < m->inf->y_len * 60)
 		{
 			s = 0;
-			if (k == (int)(m->inf->p.m->y))
+			if (k == (int)(m->inf->p.m.y))
 			{
 				while(s < m->inf->max_len * 60)
 				{
-					if (s == (int)(m->inf->p.m->x))
+					if (s == (int)(m->inf->p.m.x))
 					{
 						my_mlx_pixel_put(m, s , k, 0xf9ff79);
 					}
@@ -287,16 +289,32 @@ void draw_rays(t_mlx_data *m, double beta, int s)
 		}
 		i++;
 	}
-	// m->inf->p.m->horizontal = false;
-	// m->inf->p.m->vertical = false;
-	// if((int)floor(m->inf->p.m->x) % 60 == 0 && (int)floor(m->inf->p.m->y) % 60 != 0)
-	// 	m->inf->p.m->vertical = true;
-	//  if((int)floor(m->inf->p.m->y) % 60 == 0 && (int)floor(m->inf->p.m->x) % 60 != 0)
-	// 	m->inf->p.m->horizontal = true;
-	// if((int)floor(m->inf->p.m->x) % 60 == 0 && (int)floor(m->inf->p.m->y) % 60 != 0)
-	// 	printf("VERTICAL\n");
-	//  if((int)floor(m->inf->p.m->y) % 60 == 0 && (int)floor(m->inf->p.m->x) % 60 != 0)
-	// 	printf("HORISONTAL\n");
+	// printf("y_direction : %d\n",m->inf->p.y_direction);
+	if(m->inf->p.x_direction == 1)
+		m->inf->p.m.x++;
+	if(m->inf->p.y_direction == 1)
+		m->inf->p.m.y++;
+	// printf("mx : %f\nmy : %f\n", m->inf->p.m.x , m->inf->p.m.y );
+	m->inf->p.m.horizontal = false;
+	m->inf->p.m.vertical = false;
+	// if((int)floor(m->inf->p.m.x) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+	// 	m->inf->p.m.vertical = true;
+	//  if((int)floor(m->inf->p.m.y) % 60 == 0 && (int)floor(m->inf->p.m.x) % 60 != 0)
+	// 	m->inf->p.m.horizontal = true;
+	if((int)floor(m->inf->p.m.x) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+		m->inf->p.m.vertical = true;
+	else if((int)floor(m->inf->p.m.y) % 60 == 0 && (int)floor(m->inf->p.m.x) % 60 != 0)
+		m->inf->p.m.horizontal = true;
+	else 
+	{
+		if((int)floor(m->inf->p.m.x + 1) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+			m->inf->p.m.vertical = true;
+		else
+			m->inf->p.m.horizontal = true;
+
+	}
+		// printf("TAWA7DA\n");
+
 }
 
 
@@ -313,32 +331,50 @@ void drawLine(t_mlx_data *m, double beta, int s)
 	(void)s;
 	double ray_distance;
 	double wall_heigth;
+
+	// (void)wall_heigth;
 	// double dis_to_v_wall;
 	// while(i < 30)
 	// printf("beta : %f\n", beta);
 	get_second_point(m, 0, beta);
 
-	while(!hasWallat_for_line(m, m->inf->p.m->x  , m->inf->p.m->y ))
+	while(!hasWallat_for_line(m, m->inf->p.m.x  , m->inf->p.m.y ))
 	{
+
 		get_second_point(m, i, beta);
-		if(hasWallat_for_line(m, m->inf->p.m->x + m->inf->p.x_direction , m->inf->p.m->y  + m->inf->p.y_direction))
+		if(hasWallat_for_line(m, m->inf->p.m.x + m->inf->p.x_direction , m->inf->p.m.y  + m->inf->p.y_direction))
 			break;
 		i++;
 	}
-	m->inf->p.m->horizontal = false;
-	m->inf->p.m->vertical = false;
-	if((int)floor(m->inf->p.m->x) % 60 == 0 && (int)floor(m->inf->p.m->y) % 60 != 0)
+	// printf("y_direction : %d\n",m->inf->p.y_direction);
+	if(m->inf->p.x_direction == 1)
+		m->inf->p.m.x++;
+	if(m->inf->p.y_direction == 1)
+		m->inf->p.m.y++;
+	// printf("mx : %f\nmy : %f\n", m->inf->p.m.x , m->inf->p.m.y );
+	m->inf->p.m.horizontal = false;
+	m->inf->p.m.vertical = false;
+	// if((int)floor(m->inf->p.m.x) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+	// 	m->inf->p.m.vertical = true;
+	//  if((int)floor(m->inf->p.m.y) % 60 == 0 && (int)floor(m->inf->p.m.x) % 60 != 0)
+	// 	m->inf->p.m.horizontal = true;
+	if((int)floor(m->inf->p.m.x) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+		m->inf->p.m.vertical = true;
+	else if((int)floor(m->inf->p.m.y) % 60 == 0 && (int)floor(m->inf->p.m.x) % 60 != 0)
+		m->inf->p.m.horizontal = true;
+	else 
 	{
-		printf(RED"ooooooooooooooooooooo\n"RESET);
-		m->inf->p.m->vertical = true;
+		if((int)floor(m->inf->p.m.x + 1) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+			m->inf->p.m.vertical = true;
+		else
+			m->inf->p.m.horizontal = true;
+
 	}
-	if((int)floor(m->inf->p.m->y) % 60 == 0 && (int)floor(m->inf->p.m->x) % 60 != 0)
-		m->inf->p.m->horizontal = true;
-	ray_distance = sqrt(pow(m->inf->p.m->x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m->y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle);
+	ray_distance = sqrt(pow(m->inf->p.m.x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle);
 	wall_heigth = (1300 * 60)/(2 * (tan(M_PI/6) * ray_distance));
 
 	
-	// draw_wall(m, wall_heigth, s);
+	draw_wall(m, wall_heigth, s);
 }
 
 
@@ -347,7 +383,7 @@ void	drawPlayer(t_mlx_data *m)
 	int	k;
 	int	s;
 	// int	color;
-	// int middleX;m->inf->p.m->x
+	// int middleX;m->inf->p.m.x
 	// int middleY;
 	// color = encode_rgb(0, 255, 128);
 	// middleX = m->inf->max_len * 60/2;
@@ -381,7 +417,8 @@ void	drawPlayer(t_mlx_data *m)
 	
 	double beta = m->inf->p.rotationAngle - (30 * M_PI) / 180;
 	// double beta = m->inf->p.rotationAngle;
-	
+	if(beta < 0 && beta > -(30 * M_PI) / 180)
+		beta = 2 * M_PI + beta;
 	while(s < m->inf->max_len * 20)
 	{
 		draw_rays(m, beta, s);
@@ -475,7 +512,7 @@ bool hasWallat_for_line(t_mlx_data *m, double x, double y)
 
 	gridX = floor((x  / 60));
 	gridY = floor((y  / 60));
-	if ( m->inf->map2d[gridY][gridX] == '1' || m->inf->map2d[(int)m->inf->p.m->y/60][gridX] == '1' || m->inf->map2d[gridY][(int)m->inf->p.m->x/60] == '1' )
+	if ( m->inf->map2d[gridY][gridX] == '1' || m->inf->map2d[(int)m->inf->p.m.y/60][gridX] == '1' || m->inf->map2d[gridY][(int)m->inf->p.m.x/60] == '1' )
 		return true;
 	return false;
 }
@@ -521,6 +558,8 @@ void render3d(t_mlx_data *m)
 	// int temp = (M_PI / 3) / (m->inf->max_len * 60);
 	
 	double beta = m->inf->p.rotationAngle - M_PI / 6;
+	if(beta < 0 && beta > -(30 * M_PI) / 180)
+		beta = 2 * M_PI + beta;
 	// double beta = m->inf->p.rotationAngle;
 	
 	// printf("------------------------------------------------------------");
@@ -611,9 +650,11 @@ int	move(int keycode, t_mlx_data *m)
 
 	// printf("NewAngle : %f\n2*PI : %f\n", m->inf->p.rotationAngle, 2 * M_PI);
 	if (m->inf->p.rotationAngle > 2 * M_PI)
-		m->inf->p.rotationAngle = 0;
+		m->inf->p.rotationAngle = M_PI /80;
+	if (m->inf->p.rotationAngle < 0)
+		m->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
 	render3d(m);
-	displayMap(m, m->inf);
+	// displayMap(m, m->inf);
 	// m->inf->p.x_direction = 0;
 	// m->inf->p.y_direction = 0;
 
@@ -740,7 +781,7 @@ void	reycasting(t_infos *inf)
 	initailize_directions(&mlx);
 	mlx.inf = inf;
 	render3d(&mlx);
-	displayMap(&mlx, inf);
+	// displayMap(&mlx, inf);
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);
 	// mlx_hook(mlx.wind_ptr, 2, 1L<<1, keyRelease, &mlx);
 	mlx_loop(mlx.mlx_ptr);

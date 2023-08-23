@@ -1,5 +1,5 @@
 NAME = cub3D
-CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
+# CFLAGS = -Wall -Wextra -Werror -fsanitize=address -g3
 CC = @clang
 FT_SRC = cub3d.c parsing/parsing.c parsing/utils.c parsing/infos.c parsing/error.c parsing/floorDetails.c\
 parsing/ceilingDetails.c parsing/mapDetails.c parsing/playerDetails.c parsing/reformMap.c\

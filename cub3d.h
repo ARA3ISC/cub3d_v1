@@ -68,7 +68,7 @@ typedef struct s_player
 	int x_direction;
 	int y_direction;
 	double rotationAngle;
-	t_point *m;
+	t_point m;
 }				t_player;
 
 typedef struct s_mlx_data
