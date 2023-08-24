@@ -199,6 +199,8 @@ int		getXpmPixel(t_mlx_data *data, int x, int y)
 {
 	char	*dst;
 
+	if(y > data->inf->txts[0].height)
+		return 0;
 	dst = data->inf->txts[0].addr + (y * data->inf->txts[0].line_length + x * (data->inf->txts[0].bits_per_pixel / 8));
 	// printf(RED"*********************\n"RESET);
 	return *(unsigned int*)dst;
@@ -209,27 +211,13 @@ int get_column(t_mlx_data *m)
 {
 	if (m->inf->p.m.vertical)
 	{
-		// printf("horizontaljjj\n");
 		return ((double)(((int)(m->inf->p.m.y)) % 60)/60) * m->inf->txts[0].width;
 	}
 	else if (m->inf->p.m.horizontal)
 	{
-		// printf("verticaljjjj\n");
 		return ((double)(((int)(m->inf->p.m.x )) % 60)/60) * m->inf->txts[0].width;
 	}
 	return ((double)(((int)(m->inf->p.m.x )) % 60)/60) * m->inf->txts[0].width;
-
-	// if((int)(m->inf->p.m.y + 0.5) % 60 == 0)
-	// if((int)(m->inf->p.m.x + 0.5) % 60 == 0)
-		
-	// int x = (((int)(m->inf->p.m.x + 0.5)) % 60);
-	// int y = (((int)(m->inf->p.m.y + 0.5)) % 60);
-
-	// if(x >= y)
-	// 	return ((double)(x)/60) * m->inf->txts[0].width;
-	// else 
-	// 	return ((double)(y)/60) * m->inf->txts[0].width;
-	// return 0;
 }
 
 void draw_wall(t_mlx_data *m, double wall_heigth, int s)
@@ -242,13 +230,15 @@ void draw_wall(t_mlx_data *m, double wall_heigth, int s)
 	// int x = (m->inf->p.m.x/60 - (int)(m->inf->p.m.x / 60))* m->inf->txts[0].width;
 	double c = m->inf->txts[0].height / wall_heigth ;
 	double y = 0;
+	// double img_x =  m->inf->txts[0].width * (s/60 - floor(s/60));
 	// double r = m->inf->txts[0].width / wall_heigth;
 	
 	while (inc < wall_heigth)
 	{
+		// my_mlx_pixel_put(m, s, d++, getXpmPixel(m, img_x, y));
 		my_mlx_pixel_put(m, s, d++, getXpmPixel(m, get_column(m), y));
 		// printf("s : %d  ---- c : %f\n", s,c);
-		y += c ;
+		y += c;
 		// y++;
 		// if (y > m->inf->txts[0].height)
 		// 	break;
@@ -336,7 +326,6 @@ void drawLine(t_mlx_data *m, double beta, int s)
 	// bool horizontal = false;
 	// bool vertical = false;
 	// int k;
-	(void)s;
 	double ray_distance;
 	double wall_heigth;
 
@@ -388,7 +377,7 @@ void drawLine(t_mlx_data *m, double beta, int s)
 	wall_heigth = (1300 * 60)/(2 * (tan(M_PI/6) * ray_distance));
 	
 	// printf("wall hiegth: %f\n", wall_heigth);
-	printf("px : %f\npy : %f\n", m->inf->p.stepMoveX, m->inf->p.stepMoveY);
+	// printf("px : %f\npy : %f\n", m->inf->p.stepMoveX, m->inf->p.stepMoveY);
 
 	
 	draw_wall(m, wall_heigth, s);
@@ -499,7 +488,6 @@ bool hasWallat(t_mlx_data *m, double x, double y)
 	// 	return true;
 	// printf("y-> %d\n", m->inf->y_len);
 	// printf("x-> %d\n", m->inf->max_len);
-
 	gridX = floor((x  / 60));
 	gridY = floor((y  / 60));
 	if ( m->inf->map2d[gridY][gridX] == 32 || m->inf->map2d[gridY][gridX] == '1' || m->inf->map2d[(int)m->inf->p.stepMoveY/60][gridX] == '1' || m->inf->map2d[gridY][(int)m->inf->p.stepMoveX/60] == '1' )
@@ -550,7 +538,7 @@ void render3d(t_mlx_data *m)
 	int i = 0;
 	int j = 0;
 	int s;
-
+	
 	mlx_destroy_image(m->mlx_ptr, m->img_ptr);
 	m->img_ptr = mlx_new_image(m->mlx_ptr, 1300, 700);
 	m->addr = mlx_get_data_addr(m->img_ptr, &m->bits_per_pixel, &m->line_length, &m->endian);
@@ -601,6 +589,7 @@ void render3d(t_mlx_data *m)
 int	move(int keycode, t_mlx_data *m)
 {
 	// printf("uuuuu %d\n", keycode);
+	// printf("cccccc\n");
 	if (keycode == ESC)
 	{
 		printf("You closed the game using ESC key !");
@@ -609,30 +598,36 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == W)
 	{
+
 		// printf("Xplayer : %f ||  px : %f\n Yolayer : %f ||  py : %f\n", m->inf->p.stepMoveX/60,(m->inf->p.stepMoveX + m->inf->p.x_direction * SPEED)/60, m->inf->p.stepMoveY/60,(m->inf->p.stepMoveY - m->inf->p.y_direction * SPEED)/60);
-		// printf("posPlayerX : %f\nposPlayerY : %f\n", m->inf->p.stepMoveX, m->inf->p.stepMoveY);
 		// printf("posX to check : %f\nposY to check : %f\n", m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * (SPEED)), m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle) * (SPEED)));
-		if (hasWallat(m, m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * (SPEED)), m->inf->p.stepMoveY -  (sin(m->inf->p.rotationAngle) * (SPEED))))
+		// if (hasWallat(m, m->inf->p.stepMoveX , m->inf->p.stepMoveY - SPEED))
+		if (hasWallat(m, m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * (SPEED)), m->inf->p.stepMoveY + 2 * SPEED * m->inf->p.y_direction))
 		{
-			printf("WALL\n");
+			printf("WALLW\n");
 			return 0;
 		}
 		// m->inf->p.stepMoveY -=  SPEED ;
 		m->inf->p.stepMoveY -= (sin(m->inf->p.rotationAngle) * (SPEED));
 		m->inf->p.stepMoveX += (cos(m->inf->p.rotationAngle) * (SPEED));
+		// printf("PosPlayer X: %f ----- PosPlayer X Y : %f\n", m->inf->p.stepMoveX ,  m->inf->p.stepMoveY );
+		// printf("to check X : %f  ---- to check Y : %f\n", m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * (SPEED)),  m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle) * (SPEED)));
 		// printf("angle : %f\n", m->inf->p.rotationAngle);
 		// printf("must return 0 : %f\n", (sin(m->inf->p.rotationAngle) * (SPEED)));
 		// printf("must not return 314: %f\n",  m->inf->p.stepMoveY);
 	}
 	if (keycode == S)
 	{
-		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)) + m->inf->p.x_direction, m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED)) + m->inf->p.y_direction))
+		
+		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)) , m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED))))
 		{
-			printf("WALL\n");
+			printf("WALLS\n");
 			return 0;
 		}
 		m->inf->p.stepMoveY += (sin(m->inf->p.rotationAngle) * (SPEED));
 		m->inf->p.stepMoveX -= (cos(m->inf->p.rotationAngle) * (SPEED));
+		printf("PosPlayer X: %f ----- PosPlayer X Y : %f\n", m->inf->p.stepMoveX ,  m->inf->p.stepMoveY );
+		printf("to check X : %f  ---- to check Y : %f\n", m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)),  m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED)));
 		// m->inf->p.stepMoveY += sin(m->inf->p.rotationAngle) * SPEED ;
 		// m->inf->p.stepMoveX -= cos(m->inf->p.rotationAngle) * SPEED;
 	}
@@ -650,7 +645,7 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == A)
 	{
-		if (hasWallat(m, m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED)), m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED))))
+		if (hasWallat(m, m->inf->p.stepMoveX + 2 * m->inf->p.x_direction * (SPEED), m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED))))
 		{
 			printf("WALL\n");
 			return 0;
@@ -674,7 +669,7 @@ int	move(int keycode, t_mlx_data *m)
 	if (m->inf->p.rotationAngle < 0)
 		m->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
 	render3d(m);
-	displayMap(m, m->inf);
+	// displayMap(m, m->inf);
 	// m->inf->p.x_direction = 0;
 	// m->inf->p.y_direction = 0;
 
@@ -771,6 +766,33 @@ void	getTextures(t_mlx_data *m)
 
 }
 
+int mouse_hook(int keycode, t_mlx_data *mlx)
+{
+	// (void)mlx;
+	printf("ccc\n");
+	if(keycode == 1)
+	{
+		printf("kkkkkk");
+		printf("mouse 2\n");
+	}
+	if(keycode == 2)
+		mlx->inf->p.rotationAngle += M_PI / 80;
+	if(keycode == 3)
+		printf("mouse 3\n");
+	if(keycode == 4)
+		printf("mouse 4\n");
+	if(keycode == 5)
+		printf("mouse 5\n");
+
+	if (mlx->inf->p.rotationAngle > 2 * M_PI)
+		mlx->inf->p.rotationAngle = M_PI /80;
+	if (mlx->inf->p.rotationAngle < 0)
+		mlx->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
+	render3d(mlx);
+	displayMap(mlx, mlx->inf);
+	return 0;
+}
+
 void	reycasting(t_infos *inf)
 {
 	t_mlx_data	mlx;
@@ -800,9 +822,13 @@ void	reycasting(t_infos *inf)
 
 	initailize_directions(&mlx);
 	mlx.inf = inf;
+	// printf("PosPlayer X: %f ----- PosPlayer X Y : %f\n", mlx.inf->p.stepMoveX ,  mlx.inf->p.stepMoveY );
+	// printf("to check X : %f  ---- to check Y : %f\n", mlx.inf->p.stepMoveX + (cos(mlx.inf->p.rotationAngle) * (SPEED)),  mlx.inf->p.stepMoveY - (sin(mlx.inf->p.rotationAngle) * (SPEED)));
 	render3d(&mlx);
-	displayMap(&mlx, inf);
+	// displayMap(&mlx, inf);
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);
+	// mlx_mouse_hook(mlx.wind_ptr, mouse_hook, &mlx);
+
 	// mlx_hook(mlx.wind_ptr, 2, 1L<<1, keyRelease, &mlx);
 	mlx_loop(mlx.mlx_ptr);
 
