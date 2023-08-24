@@ -248,9 +248,13 @@ void draw_wall(t_mlx_data *m, double wall_heigth, int s)
 	{
 		my_mlx_pixel_put(m, s, d++, getXpmPixel(m, get_column(m), y));
 		// printf("s : %d  ---- c : %f\n", s,c);
+		y += c;
+		// y++;
+		if (y > m->inf->txts[0].height)
+			break;
 		inc++;
-		y +=c ;
 	}
+	// printf("c %d %f\n",  m->inf->txts[0].height, wall_heigth);
 	
 }
 
@@ -351,20 +355,21 @@ void drawLine(t_mlx_data *m, double beta, int s)
 		m->inf->p.m.x++;
 	if(m->inf->p.y_direction == 1)
 		m->inf->p.m.y++;
-	// printf("mx : %f\nmy : %f\n", m->inf->p.m.x , m->inf->p.m.y );
+	m->inf->p.m.x = floor(m->inf->p.m.x);
+	m->inf->p.m.y = floor(m->inf->p.m.y);
 	m->inf->p.m.horizontal = false;
 	m->inf->p.m.vertical = false;
 	// if((int)floor(m->inf->p.m.x) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
 	// 	m->inf->p.m.vertical = true;
 	//  if((int)floor(m->inf->p.m.y) % 60 == 0 && (int)floor(m->inf->p.m.x) % 60 != 0)
 	// 	m->inf->p.m.horizontal = true;
-	if((int)floor(m->inf->p.m.x) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+	if((int)(m->inf->p.m.x) % 60 == 0 && (int)(m->inf->p.m.y) % 60 != 0)
 		m->inf->p.m.vertical = true;
-	else if((int)floor(m->inf->p.m.y) % 60 == 0 && (int)floor(m->inf->p.m.x) % 60 != 0)
+	else if((int)(m->inf->p.m.y) % 60 == 0 && (int)(m->inf->p.m.x) % 60 != 0)
 		m->inf->p.m.horizontal = true;
 	else 
 	{
-		if((int)floor(m->inf->p.m.x + 1) % 60 == 0 && (int)floor(m->inf->p.m.y) % 60 != 0)
+		if((int)(m->inf->p.m.x + 1) % 60 == 0 && (int)(m->inf->p.m.y) % 60 != 0)
 			m->inf->p.m.vertical = true;
 		else
 			m->inf->p.m.horizontal = true;
@@ -372,6 +377,8 @@ void drawLine(t_mlx_data *m, double beta, int s)
 	}
 	ray_distance = sqrt(pow(m->inf->p.m.x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle);
 	wall_heigth = (1300 * 60)/(2 * (tan(M_PI/6) * ray_distance));
+	
+	printf("wall hiegth: %f\n", wall_heigth);
 
 	
 	draw_wall(m, wall_heigth, s);
@@ -738,7 +745,7 @@ void	getTextures(t_mlx_data *m)
 	int i = 0;
 	while (i < 4)
 	{
-		m->inf->txts[i].img_ptr = mlx_xpm_file_to_image(m->mlx_ptr, "./textures/wall1.xpm",
+		m->inf->txts[i].img_ptr = mlx_xpm_file_to_image(m->mlx_ptr, "./textures/eej-jama.xpm",
 			&m->inf->txts[i].width, &m->inf->txts[i].height);
 		
 		if (!m->inf->txts[i].img_ptr)

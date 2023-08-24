@@ -29,7 +29,7 @@
 # define RED "\033[0;31m"
 
 # define SPACE 0x2BE3E8
-# define WALL 0x900C3F
+# define WALL 0x1300C3F
 # define PLAYER 0x2CA0F6
 
 

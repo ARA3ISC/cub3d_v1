@@ -14,7 +14,7 @@ int gere_mouse(int x,int y,int button,void*toto)
 {
   printf("Mouse event - new win\n");
   mlx_destroy_window(mlx,win1);
-  win1 = mlx_new_window(mlx,random()%500,random()%500,"new win");
+  win1 = mlx_new_window(mlx,random()%700,random()%700,"new win");
   mlx_mouse_hook(win1,gere_mouse,0);
 }
 
