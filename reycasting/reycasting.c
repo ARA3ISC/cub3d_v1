@@ -210,14 +210,14 @@ int get_column(t_mlx_data *m)
 	if (m->inf->p.m.vertical)
 	{
 		// printf("horizontaljjj\n");
-		return ((double)(((int)(m->inf->p.m.y + 0.5)) % 60)/60) * m->inf->txts[0].width;
+		return ((double)(((int)(m->inf->p.m.y)) % 60)/60) * m->inf->txts[0].width;
 	}
 	else if (m->inf->p.m.horizontal)
 	{
 		// printf("verticaljjjj\n");
-		return ((double)(((int)(m->inf->p.m.x + 0.5)) % 60)/60) * m->inf->txts[0].width;
+		return ((double)(((int)(m->inf->p.m.x )) % 60)/60) * m->inf->txts[0].width;
 	}
-	return 0;
+	return ((double)(((int)(m->inf->p.m.x )) % 60)/60) * m->inf->txts[0].width;
 
 	// if((int)(m->inf->p.m.y + 0.5) % 60 == 0)
 	// if((int)(m->inf->p.m.x + 0.5) % 60 == 0)
@@ -236,22 +236,22 @@ void draw_wall(t_mlx_data *m, double wall_heigth, int s)
 {
 	double inc =  0;
 	double d =  700 / 2 - wall_heigth /2;
-	double y = 0;
 		// double x = s * (m->inf->txts[0].width / wall_heigth);
 
 	
 	// int x = (m->inf->p.m.x/60 - (int)(m->inf->p.m.x / 60))* m->inf->txts[0].width;
 	double c = m->inf->txts[0].height / wall_heigth ;
+	double y = 0;
 	// double r = m->inf->txts[0].width / wall_heigth;
 	
 	while (inc < wall_heigth)
 	{
 		my_mlx_pixel_put(m, s, d++, getXpmPixel(m, get_column(m), y));
 		// printf("s : %d  ---- c : %f\n", s,c);
-		y += c;
+		y += c ;
 		// y++;
-		if (y > m->inf->txts[0].height)
-			break;
+		// if (y > m->inf->txts[0].height)
+		// 	break;
 		inc++;
 	}
 	// printf("c %d %f\n",  m->inf->txts[0].height, wall_heigth);
@@ -298,6 +298,10 @@ void draw_rays(t_mlx_data *m, double beta, int s)
 		m->inf->p.m.x++;
 	if(m->inf->p.y_direction == 1)
 		m->inf->p.m.y++;
+	// if(m->inf->p.x_direction == 1)
+	// 	m->inf->p.stepMoveX++;
+	// if(m->inf->p.y_direction == 1)
+	// 	m->inf->p.stepMoveY++;
 	// printf("mx : %f\nmy : %f\n", m->inf->p.m.x , m->inf->p.m.y );
 	m->inf->p.m.horizontal = false;
 	m->inf->p.m.vertical = false;
@@ -355,6 +359,10 @@ void drawLine(t_mlx_data *m, double beta, int s)
 		m->inf->p.m.x++;
 	if(m->inf->p.y_direction == 1)
 		m->inf->p.m.y++;
+	// if(m->inf->p.x_direction == 1)
+	// 	m->inf->p.stepMoveX++;
+	// if(m->inf->p.y_direction == 1)
+	// 	m->inf->p.stepMoveY++;
 	m->inf->p.m.x = floor(m->inf->p.m.x);
 	m->inf->p.m.y = floor(m->inf->p.m.y);
 	m->inf->p.m.horizontal = false;
@@ -376,9 +384,11 @@ void drawLine(t_mlx_data *m, double beta, int s)
 
 	}
 	ray_distance = sqrt(pow(m->inf->p.m.x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle);
+	// printf("ray distance: %f\n", ray_distance);
 	wall_heigth = (1300 * 60)/(2 * (tan(M_PI/6) * ray_distance));
 	
-	printf("wall hiegth: %f\n", wall_heigth);
+	// printf("wall hiegth: %f\n", wall_heigth);
+	printf("px : %f\npy : %f\n", m->inf->p.stepMoveX, m->inf->p.stepMoveY);
 
 	
 	draw_wall(m, wall_heigth, s);
@@ -420,17 +430,20 @@ void	drawPlayer(t_mlx_data *m)
 
 
 	s = 0;
+	double beta;
 	// int temp = (M_PI / 3) / (m->inf->max_len * 60);
-	
-	double beta = m->inf->p.rotationAngle - (30 * M_PI) / 180;
+	// if(m->inf->p.rotationAngle > 0 && m->inf->p.rotationAngle < M_PI / 6)
+	// 	beta = 2 * M_PI - (M_PI / 6 - m->inf->p.rotationAngle);
+	// else 
+	beta = m->inf->p.rotationAngle - (30 * M_PI) / 180; 
+	if(beta <= 0 && beta >= -1 * (30 * M_PI) / 180)
+		beta = 2 * M_PI + beta;              
 	// double beta = m->inf->p.rotationAngle;
-	if(beta < 0 && beta > -(30 * M_PI) / 180)
-		beta = 2 * M_PI + beta;
 	while(s < m->inf->max_len * 20)
 	{
 		draw_rays(m, beta, s);
-		if (beta >= m->inf->p.rotationAngle + (30 * M_PI) / 180)
-			break;
+		// if (beta >= m->inf->p.rotationAngle + (30 * M_PI) / 180)
+		// 	break;
 		beta += M_PI / (3 * m->inf->max_len * 20);
 		s++;
 	}
@@ -574,8 +587,8 @@ void render3d(t_mlx_data *m)
 	{
 		drawLine(m, beta,s);
 		// printf("jkkkkjjj\n");
-		if (beta >= m->inf->p.rotationAngle + M_PI / 6)
-			break;
+		// if (beta >= m->inf->p.rotationAngle + M_PI / 6)
+		// 	break;
 		beta += M_PI / (3 * 1300 );
 		s++;
 	}
@@ -613,7 +626,7 @@ int	move(int keycode, t_mlx_data *m)
 	}
 	if (keycode == S)
 	{
-		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)), m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED))))
+		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)) + m->inf->p.x_direction, m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED)) + m->inf->p.y_direction))
 		{
 			printf("WALL\n");
 			return 0;
@@ -661,7 +674,7 @@ int	move(int keycode, t_mlx_data *m)
 	if (m->inf->p.rotationAngle < 0)
 		m->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
 	render3d(m);
-	// displayMap(m, m->inf);
+	displayMap(m, m->inf);
 	// m->inf->p.x_direction = 0;
 	// m->inf->p.y_direction = 0;
 
@@ -745,7 +758,7 @@ void	getTextures(t_mlx_data *m)
 	int i = 0;
 	while (i < 4)
 	{
-		m->inf->txts[i].img_ptr = mlx_xpm_file_to_image(m->mlx_ptr, "./textures/eej-jama.xpm",
+		m->inf->txts[i].img_ptr = mlx_xpm_file_to_image(m->mlx_ptr, "./textures/wall1.xpm",
 			&m->inf->txts[i].width, &m->inf->txts[i].height);
 		
 		if (!m->inf->txts[i].img_ptr)
@@ -788,7 +801,7 @@ void	reycasting(t_infos *inf)
 	initailize_directions(&mlx);
 	mlx.inf = inf;
 	render3d(&mlx);
-	// displayMap(&mlx, inf);
+	displayMap(&mlx, inf);
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);
 	// mlx_hook(mlx.wind_ptr, 2, 1L<<1, keyRelease, &mlx);
 	mlx_loop(mlx.mlx_ptr);
