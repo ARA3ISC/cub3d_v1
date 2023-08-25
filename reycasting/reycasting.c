@@ -431,25 +431,19 @@ void	drawPlayer(t_mlx_data *m)
 void	displayMap(t_mlx_data *m, t_infos *inf)
 {
 
-	char	**map2d;
 	int		i;
 	int		j;
 	
 
 	
 	i = 0;
-	map2d = inf->map2d;
-	// mlx_destroy_image(m->mlx_ptr, m->img_ptr);
-	// m->img_ptr = mlx_new_image(m->mlx_ptr, WINDOW_WIdTH * MINIMAP_PERCENT , WINDOW_HEIGHT * MINIMAP_PERCENT);
-	// m->addr = mlx_get_data_addr(m->img_ptr, &m->bits_per_pixel, &m->line_length, &m->endian);
-	m->inf = inf;
 
-	while (map2d[i])
+	while (inf->map2d[i])
 	{
 		j = 0;
-		while (map2d[i][j])
+		while (inf->map2d[i][j])
 		{
-			if (map2d[i][j] == '1' || map2d[i][j] == 32)
+			if (inf->map2d[i][j] == '1' || inf->map2d[i][j] == 32)
 				drawSquare(m, j, i);
 			else
 				drawSpace(m, j, i);
@@ -596,6 +590,7 @@ int	move(int keycode, t_mlx_data *m)
 			return 0;
 		}
 		// m->inf->p.stepMoveY -=  SPEED ;
+		// printf("angle : %f\n", m->inf->p.rotationAngle);
 		m->inf->p.stepMoveY -= (sin(m->inf->p.rotationAngle) * (SPEED));
 		m->inf->p.stepMoveX += (cos(m->inf->p.rotationAngle) * (SPEED));
 		m->inf->p.stepMoveY_minimap -= (sin(m->inf->p.rotationAngle) * (SPEED * m->inf->percent_h_mini));
@@ -665,7 +660,7 @@ int	move(int keycode, t_mlx_data *m)
 	if (m->inf->p.rotationAngle < 0)
 		m->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
 	render3d(m);
-	// displayMap(m, m->inf);
+	displayMap(m, m->inf);
 	// m->inf->p.x_direction = 0;
 	// m->inf->p.y_direction = 0;
 
@@ -731,7 +726,7 @@ int mouse_hook(int keycode, int x, int y, t_mlx_data *mlx)
 	if (mlx->inf->p.rotationAngle < 0)
 		mlx->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
 	render3d(mlx);
-	// displayMap(mlx, mlx->inf);
+	displayMap(mlx, mlx->inf);
 	return 0;
 }
 
@@ -787,7 +782,7 @@ void	reycasting(t_infos *inf)
 	// printf("PosPlayer X: %f ----- PosPlayer X Y : %f\n", mlx.inf->p.stepMoveX ,  mlx.inf->p.stepMoveY );
 	// printf("to check X : %f  ---- to check Y : %f\n", mlx.inf->p.stepMoveX + (cos(mlx.inf->p.rotationAngle) * (SPEED)),  mlx.inf->p.stepMoveY - (sin(mlx.inf->p.rotationAngle) * (SPEED)));
 	render3d(&mlx);
-	// displayMap(&mlx, inf);
+	displayMap(&mlx, inf);
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);
 	// mlx_hook(mlx.wind_ptr, 6, 1L<<6, &handle_mouse, &mlx);
 
