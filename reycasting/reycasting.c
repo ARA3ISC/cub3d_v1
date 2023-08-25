@@ -34,15 +34,13 @@ void	drawSpace(t_mlx_data *m, int x, int y)
 	int	s;
 
 	k = 0;
-	while (k < PIXEL_CASE)
+				// my_mlx_pixel_put(m , MINIMAP_PERCENT * (s + (PIXEL_CASE * x)), MINIMAP_PERCENT * (k + (PIXEL_CASE * y)), SPACE);
+	while (k < WINDOW_HEIGHT * MINIMAP_PERCENT / m->inf->y_len  )
 	{
 		s = 0;
-		while (s < PIXEL_CASE)
+		while (s < WINDOW_WIdTH * MINIMAP_PERCENT / m->inf->max_len)
 		{
-			if (s == 0 || k == 0)
-				my_mlx_pixel_put(m , MINIMAP_PERCENT * (s + (PIXEL_CASE * x)), MINIMAP_PERCENT * (k + (PIXEL_CASE * y)) * 0.001, 0x000000);
-			else
-				my_mlx_pixel_put(m , MINIMAP_PERCENT * (s + (PIXEL_CASE * x)), MINIMAP_PERCENT * (k + (PIXEL_CASE * y)), SPACE);
+			my_mlx_pixel_put(m ,    (s + (  x * PIXEL_CASE * m->inf->percent_w_mini )),    (k + (   y * PIXEL_CASE * m->inf->percent_h_mini )), SPACE);
 			s++;
 		}
 		k++;
@@ -67,12 +65,12 @@ void	drawSquare(t_mlx_data *m, int x, int y)
 	int	s;
 
 	k = 0;
-	while (k < PIXEL_CASE * m->inf->percent_h_mini )
+	while (k < WINDOW_HEIGHT * MINIMAP_PERCENT / m->inf->y_len  )
 	{
 		s = 0;
-		while (s < PIXEL_CASE * m->inf->percent_w_mini )
+		while (s < WINDOW_WIdTH * MINIMAP_PERCENT / m->inf->max_len)
 		{
-			my_mlx_pixel_put(m ,    (s + (PIXEL_CASE * m->inf->percent_w_mini  * x  )),    (k + (PIXEL_CASE * m->inf->percent_h_mini  * y )), 0xFFFFFF);
+			my_mlx_pixel_put(m ,    (s + (  x * PIXEL_CASE * m->inf->percent_w_mini )),    (k + (   y * PIXEL_CASE * m->inf->percent_h_mini )), 0xFFFFFF);
 			s++;
 		}
 		k++;
@@ -378,18 +376,31 @@ void	drawPlayer(t_mlx_data *m)
 	int	s;
 
 	k = 0;
-	while (k < m->inf->y_len * PIXEL_CASE * MINIMAP_PERCENT)
+
+	// while (k < WINDOW_HEIGHT * MINIMAP_PERCENT / m->inf->y_len  )
+	// {
+	// 	s = 0;
+	// 	while (s < WINDOW_WIdTH * MINIMAP_PERCENT / m->inf->max_len)
+	// 	{
+	// 		my_mlx_pixel_put(m ,    (s + (  x * PIXEL_CASE * m->inf->percent_w_mini )),    (k + (   y * PIXEL_CASE * m->inf->percent_h_mini )), 0xFFFFFF);
+	// 		s++;
+	// 	}
+	// 	k++;
+	// }
+
+	// printf("xplayer : %f\nyplayer : %f\n", m->inf->p.stepMoveX_minimap, m->inf->p.stepMoveY_minimap);
+	while (k < WINDOW_HEIGHT * MINIMAP_PERCENT)
 	{
 		s = 0;
-		if (k == m->inf->p.stepMoveY_minimap)
+		if (k == floor(m->inf->p.stepMoveY_minimap))
 		{
-			while (s < m->inf->max_len * PIXEL_CASE * MINIMAP_PERCENT)
+			while (s < WINDOW_WIdTH * MINIMAP_PERCENT)
 			{
-				if ( s == m->inf->p.stepMoveX_minimap)
+				if ( s == floor(m->inf->p.stepMoveX_minimap))
 				{
-					my_mlx_pixel_put(m, s  , k, 0xFF0000);
-
-					// circle(m, m->inf->p.stepMoveX_minimap , m->inf->p.stepMoveY_minimap, 1, 0xFF0000);
+					// my_mlx_pixel_put(m, k  , s, 0xFF0000);
+					// printf("ddddddddd\n");
+					circle(m, m->inf->p.stepMoveX_minimap , m->inf->p.stepMoveY_minimap, 2, 0xFF0000);
 				}
 				s++;
 			}
@@ -425,13 +436,12 @@ void	displayMap(t_mlx_data *m, t_infos *inf)
 	int		j;
 	
 
-	m->inf->percent_h_mini =  WINDOW_HEIGHT * MINIMAP_PERCENT / m->inf->y_len * PIXEL_CASE;
-	m->inf->percent_w_mini = WINDOW_WIdTH * MINIMAP_PERCENT /  m->inf->max_len * PIXEL_CASE;
+	
 	i = 0;
 	map2d = inf->map2d;
 	// mlx_destroy_image(m->mlx_ptr, m->img_ptr);
-	m->img_ptr = mlx_new_image(m->mlx_ptr, WINDOW_WIdTH * MINIMAP_PERCENT , WINDOW_HEIGHT * MINIMAP_PERCENT);
-	m->addr = mlx_get_data_addr(m->img_ptr, &m->bits_per_pixel, &m->line_length, &m->endian);
+	// m->img_ptr = mlx_new_image(m->mlx_ptr, WINDOW_WIdTH * MINIMAP_PERCENT , WINDOW_HEIGHT * MINIMAP_PERCENT);
+	// m->addr = mlx_get_data_addr(m->img_ptr, &m->bits_per_pixel, &m->line_length, &m->endian);
 	m->inf = inf;
 
 	while (map2d[i])
@@ -441,14 +451,14 @@ void	displayMap(t_mlx_data *m, t_infos *inf)
 		{
 			if (map2d[i][j] == '1' || map2d[i][j] == 32)
 				drawSquare(m, j, i);
-			// else
-			// 	drawSpace(m, j, i);
+			else
+				drawSpace(m, j, i);
 			j++;
 		}
 		i++;
 	}
 
-	// drawPlayer(m);
+	drawPlayer(m);
 	// draw_rays(m);
 	mlx_put_image_to_window(m->mlx_ptr, m->wind_ptr, m->img_ptr, 0, 0);
 }
@@ -582,14 +592,14 @@ int	move(int keycode, t_mlx_data *m)
 		// if (hasWallat(m, m->inf->p.stepMoveX , m->inf->p.stepMoveY - SPEED))
 		if (hasWallat(m, m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * (SPEED)), m->inf->p.stepMoveY + 2 * SPEED * m->inf->p.y_direction))
 		{
-			printf("WALLW\n");
+			// printf("WALLW\n");
 			return 0;
 		}
 		// m->inf->p.stepMoveY -=  SPEED ;
 		m->inf->p.stepMoveY -= (sin(m->inf->p.rotationAngle) * (SPEED));
 		m->inf->p.stepMoveX += (cos(m->inf->p.rotationAngle) * (SPEED));
-		m->inf->p.stepMoveY_minimap -= (sin(m->inf->p.rotationAngle) * (SPEED * MINIMAP_PERCENT));
-		m->inf->p.stepMoveX_minimap += (cos(m->inf->p.rotationAngle) * (SPEED * MINIMAP_PERCENT));
+		m->inf->p.stepMoveY_minimap -= (sin(m->inf->p.rotationAngle) * (SPEED * m->inf->percent_h_mini));
+		m->inf->p.stepMoveX_minimap += (cos(m->inf->p.rotationAngle) * (SPEED * m->inf->percent_w_mini));
 		// printf("PosPlayer X: %f ----- PosPlayer X Y : %f\n", m->inf->p.stepMoveX ,  m->inf->p.stepMoveY );
 		// printf("to check X : %f  ---- to check Y : %f\n", m->inf->p.stepMoveX + (cos(m->inf->p.rotationAngle) * (SPEED)),  m->inf->p.stepMoveY - (sin(m->inf->p.rotationAngle) * (SPEED)));
 		// printf("angle : %f\n", m->inf->p.rotationAngle);
@@ -601,13 +611,13 @@ int	move(int keycode, t_mlx_data *m)
 		
 		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)) , m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED))))
 		{
-			printf("WALLS\n");
+			// printf("WALLS\n");
 			return 0;
 		}
 		m->inf->p.stepMoveY += (sin(m->inf->p.rotationAngle) * (SPEED));
 		m->inf->p.stepMoveX -= (cos(m->inf->p.rotationAngle) * (SPEED));
-		m->inf->p.stepMoveY_minimap += (sin(m->inf->p.rotationAngle) * (SPEED * MINIMAP_PERCENT));
-		m->inf->p.stepMoveX_minimap -= (cos(m->inf->p.rotationAngle) * (SPEED * MINIMAP_PERCENT));
+		m->inf->p.stepMoveY_minimap += (sin(m->inf->p.rotationAngle) * (SPEED * m->inf->percent_h_mini));
+		m->inf->p.stepMoveX_minimap -= (cos(m->inf->p.rotationAngle) * (SPEED * m->inf->percent_w_mini));
 		// printf("PosPlayer X: %f ----- PosPlayer X Y : %f\n", m->inf->p.stepMoveX ,  m->inf->p.stepMoveY );
 		// printf("to check X : %f  ---- to check Y : %f\n", m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle) * (SPEED)),  m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle) * (SPEED)));
 		// m->inf->p.stepMoveY += sin(m->inf->p.rotationAngle) * SPEED ;
@@ -623,8 +633,8 @@ int	move(int keycode, t_mlx_data *m)
 		// m->inf->p.stepMoveX += SPEED;
 		m->inf->p.stepMoveY += (sin(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED)) ;
 		m->inf->p.stepMoveX -= (cos(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED));
-		m->inf->p.stepMoveY_minimap += (sin(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED * MINIMAP_PERCENT));
-		m->inf->p.stepMoveX_minimap -= (cos(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED * MINIMAP_PERCENT));
+		m->inf->p.stepMoveY_minimap += (sin(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED * m->inf->percent_h_mini));
+		m->inf->p.stepMoveX_minimap -= (cos(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED * m->inf->percent_w_mini));
 		// m->inf->p.stepMoveX -= cos(m->inf->p.rotationAngle) * SPEED;
 	}
 	if (keycode == D)
@@ -636,8 +646,8 @@ int	move(int keycode, t_mlx_data *m)
 		}
 		m->inf->p.stepMoveY -= (sin(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED)) ;
 		m->inf->p.stepMoveX += (cos(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED));
-		m->inf->p.stepMoveY_minimap -= (sin(m->inf->p.rotationAngle + (M_PI * 3/2)) * (SPEED * MINIMAP_PERCENT));
-		m->inf->p.stepMoveX_minimap += (cos(m->inf->p.rotationAngle + (M_PI * 3/2)) * (SPEED * MINIMAP_PERCENT));
+		m->inf->p.stepMoveY_minimap -= (sin(m->inf->p.rotationAngle + (M_PI * 3/2)) * (SPEED * m->inf->percent_h_mini));
+		m->inf->p.stepMoveX_minimap += (cos(m->inf->p.rotationAngle + (M_PI * 3/2)) * (SPEED * m->inf->percent_w_mini));
 	}
 	if (keycode == LEFT)
 	{
@@ -655,7 +665,7 @@ int	move(int keycode, t_mlx_data *m)
 	if (m->inf->p.rotationAngle < 0)
 		m->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
 	render3d(m);
-	displayMap(m, m->inf);
+	// displayMap(m, m->inf);
 	// m->inf->p.x_direction = 0;
 	// m->inf->p.y_direction = 0;
 
@@ -697,7 +707,7 @@ int mouse_hook(int keycode, int x, int y, t_mlx_data *mlx)
 	(void)mlx;
 	(void)x;
 	(void)y;
-	printf("ccc\n");
+	// printf("ccc\n");
 	if(keycode == 1)
 	{
 	}
@@ -721,7 +731,7 @@ int mouse_hook(int keycode, int x, int y, t_mlx_data *mlx)
 	if (mlx->inf->p.rotationAngle < 0)
 		mlx->inf->p.rotationAngle = 2 * M_PI - M_PI/80;
 	render3d(mlx);
-	displayMap(mlx, mlx->inf);
+	// displayMap(mlx, mlx->inf);
 	return 0;
 }
 
@@ -762,18 +772,22 @@ void	reycasting(t_infos *inf)
 
 	// mlx.inf->txts = malloc(4 * sizeof(t_texts));
 	getTextures(&mlx);
+	mlx.inf->percent_h_mini =  WINDOW_HEIGHT * MINIMAP_PERCENT / (mlx.inf->y_len * PIXEL_CASE);
+	mlx.inf->percent_w_mini = WINDOW_WIdTH * MINIMAP_PERCENT /  (mlx.inf->max_len * PIXEL_CASE);
 
 	mlx.inf->p.stepMoveX = mlx.inf->p.x * PIXEL_CASE + PIXEL_CASE/2;
 	mlx.inf->p.stepMoveY = mlx.inf->p.y * PIXEL_CASE + PIXEL_CASE/2;
-	mlx.inf->p.stepMoveX_minimap = (mlx.inf->p.x * PIXEL_CASE + PIXEL_CASE/2) * MINIMAP_PERCENT;
-	mlx.inf->p.stepMoveY_minimap = (mlx.inf->p.y * PIXEL_CASE + PIXEL_CASE/2) * MINIMAP_PERCENT;
+	// mlx.inf->p.stepMoveX_minimap = (mlx.inf->p.x * (PIXEL_CASE) + (PIXEL_CASE)/2)  * mlx.inf->percent_w_mini;
+	mlx.inf->p.stepMoveX_minimap = (mlx.inf->p.x + 0.5) * PIXEL_CASE * mlx.inf->percent_w_mini;
+	mlx.inf->p.stepMoveY_minimap = (mlx.inf->p.y + 0.5) * PIXEL_CASE * mlx.inf->percent_h_mini;
+	// mlx.inf->p.stepMoveY_minimap = (mlx.inf->p.y * (PIXEL_CASE) + (PIXEL_CASE)/2)  * mlx.inf->percent_h_mini;
 
 	initailize_directions(&mlx);
 	mlx.inf = inf;
 	// printf("PosPlayer X: %f ----- PosPlayer X Y : %f\n", mlx.inf->p.stepMoveX ,  mlx.inf->p.stepMoveY );
 	// printf("to check X : %f  ---- to check Y : %f\n", mlx.inf->p.stepMoveX + (cos(mlx.inf->p.rotationAngle) * (SPEED)),  mlx.inf->p.stepMoveY - (sin(mlx.inf->p.rotationAngle) * (SPEED)));
 	render3d(&mlx);
-	displayMap(&mlx, inf);
+	// displayMap(&mlx, inf);
 	mlx_hook(mlx.wind_ptr, 2, 1L<<0, move, &mlx);
 	// mlx_hook(mlx.wind_ptr, 6, 1L<<6, &handle_mouse, &mlx);
 
