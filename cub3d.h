@@ -43,11 +43,17 @@
 # define UP 126
 # define DOWN 125
 # define SPEED 3
+# define WINDOW_HEIGHT 700
+# define WINDOW_WIdTH 1300
+# define PIXEL_CASE 60
+# define MINIMAP_PERCENT 0.3
 
 typedef struct s_point
 {
 	double x;
 	double y;
+	double x_minimap;
+	double y_minimap;
 	bool vertical;
 	bool horizontal;
 }	t_point;
@@ -62,6 +68,8 @@ typedef struct s_player
 	double	y_tmp;
 	double stepMoveX;
 	double stepMoveY;
+	double stepMoveX_minimap;
+	double stepMoveY_minimap;
 
 	char direction;
 
