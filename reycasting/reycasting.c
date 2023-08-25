@@ -67,15 +67,12 @@ void	drawSquare(t_mlx_data *m, int x, int y)
 	int	s;
 
 	k = 0;
-	while (k < PIXEL_CASE )
+	while (k < PIXEL_CASE * m->inf->percent_h_mini )
 	{
 		s = 0;
-		while (s < PIXEL_CASE )
+		while (s < PIXEL_CASE * m->inf->percent_w_mini )
 		{
-			// if (s == 0 || k == 0)
-			// 	my_mlx_pixel_put(m ,    (s + (PIXEL_CASE * x * MINIMAP_PERCENT)),    (k + (PIXEL_CASE * y * MINIMAP_PERCENT)), 0x000000);
-			// else
-				my_mlx_pixel_put(m ,    (s + (PIXEL_CASE * x * MINIMAP_PERCENT)),    (k + (PIXEL_CASE * y * MINIMAP_PERCENT)), WALL);
+			my_mlx_pixel_put(m ,    (s + (PIXEL_CASE * m->inf->percent_w_mini  * x  )),    (k + (PIXEL_CASE * m->inf->percent_h_mini  * y )), 0xFFFFFF);
 			s++;
 		}
 		k++;
@@ -426,7 +423,10 @@ void	displayMap(t_mlx_data *m, t_infos *inf)
 	char	**map2d;
 	int		i;
 	int		j;
+	
 
+	m->inf->percent_h_mini =  WINDOW_HEIGHT * MINIMAP_PERCENT / m->inf->y_len * PIXEL_CASE;
+	m->inf->percent_w_mini = WINDOW_WIdTH * MINIMAP_PERCENT /  m->inf->max_len * PIXEL_CASE;
 	i = 0;
 	map2d = inf->map2d;
 	// mlx_destroy_image(m->mlx_ptr, m->img_ptr);
@@ -441,14 +441,14 @@ void	displayMap(t_mlx_data *m, t_infos *inf)
 		{
 			if (map2d[i][j] == '1' || map2d[i][j] == 32)
 				drawSquare(m, j, i);
-			else
-				drawSpace(m, j, i);
+			// else
+			// 	drawSpace(m, j, i);
 			j++;
 		}
 		i++;
 	}
 
-	drawPlayer(m);
+	// drawPlayer(m);
 	// draw_rays(m);
 	mlx_put_image_to_window(m->mlx_ptr, m->wind_ptr, m->img_ptr, 0, 0);
 }

@@ -46,7 +46,7 @@
 # define WINDOW_HEIGHT 700
 # define WINDOW_WIdTH 1300
 # define PIXEL_CASE 60
-# define MINIMAP_PERCENT 0.3
+# define MINIMAP_PERCENT 0.2
 
 typedef struct s_point
 {
@@ -123,8 +123,8 @@ typedef struct s_infos
 	int			y_len;
 	int			max_len;
 	int			index_max_len;
-
-	
+	double 		percent_h_mini;
+	double 		percent_w_mini;
 	t_player	p;
 
 	t_texts		txts[4];
