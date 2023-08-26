@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   cub3d.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maneddam <marvin@42>                       +#+  +:+       +#+        */
+/*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/04 16:41:47 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/18 12:24:31 by maneddam         ###   ########.fr       */
+/*   Updated: 2023/08/26 10:28:01 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,14 +140,12 @@ char			*get_next_line(int fd);
 char			*ft_strjoin_free(char *s1, char *s2);
 char			*ft_strjoin_char(char *s1, char c);
 int				ft_strcmp(char *s1, char *s2);
-
 void			getNord(char *readLine, t_infos *infos, int pos);
 void			getSouth(char *readLine, t_infos *infos, int pos);
 void			getWest(char *readLine, t_infos *infos, int pos);
 void			getEast(char *readLine, t_infos *infos, int pos);
 void			getFloor(char *readLine, t_infos *infos, int pos);
 void			getCeiling(char *readLine, t_infos *infos, int pos);
-
 bool			isCompound(t_infos *infos);
 void			handleFloorDetails(char *readLine, t_infos *infos);
 void			handleCeilingDetails(char *readLine, t_infos *infos);
@@ -156,13 +154,42 @@ void			invalidCharacters(char *readline);
 int				countWords(char *str);
 void			invalidForm(char *readLine);
 void			handleMap(char *fullmap, t_infos *infos);
-
 void			handlePlayer(char **map, t_infos *infos);
 char			**reFormeMap(char **map2d, t_infos *infos);
-
 void			reycasting(t_infos *inf);
-t_player	player_pos(char **table_2d);
-bool hasWallat(t_mlx_data *m, double x, double y);
-bool hasWallat_for_line(t_mlx_data *m, double x, double y);
-int rgb_to_hex(int red, int green, int blue);
+t_player		player_pos(char **table_2d);
+bool 			hasWallat(t_mlx_data *m, double x, double y);
+bool 			hasWallat_for_line(t_mlx_data *m, double x, double y);
+int 			rgb_to_hex(int red, int green, int blue);
+void 			get_second_point_for_rays(t_mlx_data *m, int i, double beta);
+void 			draw_rays(t_mlx_data *m, double beta);
+void 			circle(t_mlx_data *m, int x, int y, int radius, int color);
+void			draw_space(t_mlx_data *m, int x, int y);
+void			draw_square(t_mlx_data *m, int x, int y);
+void			draw_player(t_mlx_data *m);
+void			my_mlx_pixel_put(t_mlx_data *data, int x, int y, int color);
+int				getXpmPixel(t_mlx_data *data, int x, int y);
+int 			mouse_hook(int keycode, int x, int y, t_mlx_data *mlx);
+int				move(int keycode, t_mlx_data *m);
+int  			get_column(t_mlx_data *m);
+void 			draw_wall(t_mlx_data *m, double wall_heigth, int s);
+void 			get_second_point(t_mlx_data *m, int i, double beta);
+void 			draw_line(t_mlx_data *m, double beta, int s);
+void 			render3d(t_mlx_data *m);
+void			displayMap(t_mlx_data *m, t_infos *inf);
+
+
+
+void	getTextures(t_mlx_data *m);
+
+
+
+
+
+
+
+
+
+
+
 #endif

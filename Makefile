@@ -3,7 +3,7 @@ NAME = cub3D
 CC = @clang
 FT_SRC = cub3d.c parsing/parsing.c parsing/utils.c parsing/infos.c parsing/error.c parsing/floorDetails.c\
 parsing/ceilingDetails.c parsing/mapDetails.c parsing/playerDetails.c parsing/reformMap.c\
-reycasting/reycasting.c reycasting/utils.c \
+reycasting/reycasting.c reycasting/utils.c  reycasting/minimap.c reycasting/mlx_tool_help.c reycasting/player_moves.c reycasting/rendring3d.c \
 get_next_line/get_next_line_utils.c get_next_line/get_next_line.c \
 libft/ft_strchr.c libft/ft_strdup.c libft/ft_strlen.c libft/ft_strjoin.c libft/ft_strcmp.c libft/ft_isdigit.c\
 libft/ft_atoi.c libft/ft_split.c libft/ft_substr.c
