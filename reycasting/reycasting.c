@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 14:35:47 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/26 10:23:56 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/26 10:48:39 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,15 +91,15 @@ void render3d(t_mlx_data *m)
 		}
 		i++;
 	}
-	s = 0;
+	s = WINDOW_WIdTH;
 	double beta = m->inf->p.rotationAngle - M_PI / 6;
 	if(beta < 0 && beta > -(30 * M_PI) / 180)
 		beta = 2 * M_PI + beta;
-	while(s < WINDOW_WIdTH)
+	while(s >= 0)
 	{
 		draw_line(m, beta,s);
 		beta += M_PI / (3 * WINDOW_WIdTH );
-		s++;
+		s--;
 	}
 	mlx_put_image_to_window(m->mlx_ptr, m->wind_ptr, m->img_ptr, 0, 0);
 }

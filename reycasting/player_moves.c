@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 09:47:26 by eej-jama          #+#    #+#             */
-/*   Updated: 2023/08/26 10:07:20 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/26 10:49:14 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,9 +95,9 @@ int	move(int keycode, t_mlx_data *m)
 		m->inf->p.stepMoveX_minimap += (cos(m->inf->p.rotationAngle - (M_PI * 3/2)) * (SPEED * m->inf->percent_w_mini));
 	}
 	if (keycode == LEFT)
-		m->inf->p.rotationAngle -= M_PI / 80;
-	if (keycode == RIGHT)
 		m->inf->p.rotationAngle += M_PI / 80;
+	if (keycode == RIGHT)
+		m->inf->p.rotationAngle -= M_PI / 80;
 	if (m->inf->p.rotationAngle > 2 * M_PI)
 		m->inf->p.rotationAngle = M_PI /80;
 	if (m->inf->p.rotationAngle < 0)
