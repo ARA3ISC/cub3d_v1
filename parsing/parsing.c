@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parsing.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maneddam <marvin@42>                       +#+  +:+       +#+        */
+/*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 21:17:31 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/10 18:45:57 by maneddam         ###   ########.fr       */
+/*   Updated: 2023/08/26 08:45:22 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ void checkArg(char *mapPath)
 	if (mapPath[i] != 'b' || mapPath[--i] != 'u' || mapPath[--i] != 'c' || mapPath[--i] != '.')
 		printError("Map extension must be as follow '.cub' !!");
 }
+
 void checkMapItems(char **map2d)
 {
 	int i;

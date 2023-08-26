@@ -132,7 +132,7 @@ typedef struct s_infos
 	// int y_len;
 }				t_infos;
 
-void			draw_rays(t_mlx_data *m, double beta, int s);
+void			draw_rays(t_mlx_data *m, double beta);
 
 void			printError(char *msg);
 void			parsing(char *argv, t_infos *infos);
