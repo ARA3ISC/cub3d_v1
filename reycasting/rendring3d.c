@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 09:40:10 by eej-jama          #+#    #+#             */
-/*   Updated: 2023/08/26 15:50:17 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/26 16:16:27 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,10 +116,10 @@ void draw_line(t_mlx_data *m, double beta, int s)
 		m->inf->p.m.horizontal = true;
 	else
 	{
-		if((int)(m->inf->p.m.x + 1) % PIXEL_CASE == 0 && (int)(m->inf->p.m.y) % PIXEL_CASE != 0)
-			m->inf->p.m.vertical = true;
-		else
+		if((sin(beta) > 0 && cos(beta) > 0) || (sin(beta) < 0 && cos(beta) < 0))
 			m->inf->p.m.horizontal = true;
+		else if ((sin(beta) < 0 && cos(beta)) > 0 || (sin(beta) < 0 && cos(beta) < 0))
+			m->inf->p.m.vertical = true;
 	}
 	ray_distance = sqrt(pow(m->inf->p.m.x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle);
 	wall_heigth = (WINDOW_WIdTH * PIXEL_CASE)/(2 * (tan(M_PI/6) * ray_distance));

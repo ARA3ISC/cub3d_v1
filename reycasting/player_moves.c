@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 09:47:26 by eej-jama          #+#    #+#             */
-/*   Updated: 2023/08/26 10:49:14 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/26 16:08:24 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,7 +76,7 @@ int	move(int keycode, t_mlx_data *m)
 		m->inf->p.stepMoveY_minimap += (sin(m->inf->p.rotationAngle) * (SPEED * m->inf->percent_h_mini));
 		m->inf->p.stepMoveX_minimap -= (cos(m->inf->p.rotationAngle) * (SPEED * m->inf->percent_w_mini));
 	}
-	if (keycode == A)
+	if (keycode == D)
 	{
 		if (hasWallat(m, m->inf->p.stepMoveX - (cos(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED)), m->inf->p.stepMoveY + (sin(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED))))
 			return 0;
@@ -85,7 +85,7 @@ int	move(int keycode, t_mlx_data *m)
 		m->inf->p.stepMoveY_minimap += (sin(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED * m->inf->percent_h_mini));
 		m->inf->p.stepMoveX_minimap -= (cos(m->inf->p.rotationAngle + (M_PI/2)) * (SPEED * m->inf->percent_w_mini));
 	}
-	if (keycode == D)
+	if (keycode == A)
 	{
 		if (hasWallat(m, m->inf->p.stepMoveX + 2 * m->inf->p.x_direction * (SPEED), m->inf->p.stepMoveY + 2 * m->inf->p.y_direction * (SPEED)))
 			return 0;
