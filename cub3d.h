@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/04 16:41:47 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/26 10:28:01 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/26 15:50:40 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,11 +168,11 @@ void			draw_space(t_mlx_data *m, int x, int y);
 void			draw_square(t_mlx_data *m, int x, int y);
 void			draw_player(t_mlx_data *m);
 void			my_mlx_pixel_put(t_mlx_data *data, int x, int y, int color);
-int				getXpmPixel(t_mlx_data *data, int x, int y);
+int				getXpmPixel(t_mlx_data *data, int x, int y, int i);
 int 			mouse_hook(int keycode, int x, int y, t_mlx_data *mlx);
 int				move(int keycode, t_mlx_data *m);
-int  			get_column(t_mlx_data *m);
-void 			draw_wall(t_mlx_data *m, double wall_heigth, int s);
+int  			get_column(t_mlx_data *m, int i);
+void 			draw_wall(t_mlx_data *m, double wall_heigth, int s, int i);
 void 			get_second_point(t_mlx_data *m, int i, double beta);
 void 			draw_line(t_mlx_data *m, double beta, int s);
 void 			render3d(t_mlx_data *m);

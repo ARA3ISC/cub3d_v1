@@ -1,9 +1,9 @@
 
 NO 	./textures/wall1.xpm
-SO ./path_to_the_south_texture
-WE .    
+SO ./textures/wall1.xpm
+WE ./textures/wall1.xpm
 
-EA ./path_to_the_east_texture
+EA ./textures/wall1.xpm
 
 C 84,		136	,  227
 F   129,78,32

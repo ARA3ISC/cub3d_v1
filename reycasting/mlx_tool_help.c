@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 09:36:48 by eej-jama          #+#    #+#             */
-/*   Updated: 2023/08/26 09:48:07 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/26 15:49:56 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,13 +27,13 @@ void	my_mlx_pixel_put(t_mlx_data *data, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-int		getXpmPixel(t_mlx_data *data, int x, int y)
+int		getXpmPixel(t_mlx_data *data, int x, int y, int i)
 {
 	char	*dst;
 
-	if(y > data->inf->txts[0].height)
+	if(y > data->inf->txts[i].height)
 		return 0;
-	dst = data->inf->txts[0].addr + (y * data->inf->txts[0].line_length + x * (data->inf->txts[0].bits_per_pixel / 8));
+	dst = data->inf->txts[i].addr + (y * data->inf->txts[i].line_length + x * (data->inf->txts[i].bits_per_pixel / 8));
 	// printf(RED"*********************\n"RESET);
 	return *(unsigned int*)dst;
 }
