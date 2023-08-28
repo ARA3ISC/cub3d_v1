@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/11 14:35:47 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/26 10:48:39 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/26 19:02:47 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,9 +44,9 @@ void	displayMap(t_mlx_data *m, t_infos *inf)
 
 	int		i;
 	int		j;
-	
 
-	
+
+
 	i = 0;
 
 	while (inf->map2d[i])
@@ -72,7 +72,7 @@ void render3d(t_mlx_data *m)
 	int i;
 	int j;
 	int s;
-	
+
 	i = 0;
 	j = 0;
 	mlx_destroy_image(m->mlx_ptr, m->img_ptr);

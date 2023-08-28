@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/26 09:40:10 by eej-jama          #+#    #+#             */
-/*   Updated: 2023/08/26 16:16:27 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/28 04:47:12 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,7 +92,11 @@ void draw_line(t_mlx_data *m, double beta, int s)
 	int i;
 	double ray_distance;
 	double wall_heigth;
-
+	char v_h;
+	if(m->inf->p.m.horizontal)
+		v_h = 'h';
+	else
+		v_h = 'v';
     i = 0;
 	get_second_point(m, 0, beta);
 	while(!hasWallat_for_line(m, m->inf->p.m.x  , m->inf->p.m.y ))
@@ -110,19 +114,33 @@ void draw_line(t_mlx_data *m, double beta, int s)
 	m->inf->p.m.y = floor(m->inf->p.m.y);
 	m->inf->p.m.horizontal = false;
 	m->inf->p.m.vertical = false;
+	ray_distance = sqrt(pow(m->inf->p.m.x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle);
+	wall_heigth = (WINDOW_WIdTH * PIXEL_CASE)/(2 * (tan(M_PI/6) * ray_distance));
 	if((int)(m->inf->p.m.x) % PIXEL_CASE == 0 && (int)(m->inf->p.m.y) % PIXEL_CASE != 0)
 		m->inf->p.m.vertical = true;
 	else if((int)(m->inf->p.m.y) % PIXEL_CASE == 0 && (int)(m->inf->p.m.x) % PIXEL_CASE != 0)
 		m->inf->p.m.horizontal = true;
 	else
 	{
-		if((sin(beta) > 0 && cos(beta) > 0) || (sin(beta) < 0 && cos(beta) < 0))
-			m->inf->p.m.horizontal = true;
-		else if ((sin(beta) < 0 && cos(beta)) > 0 || (sin(beta) < 0 && cos(beta) < 0))
-			m->inf->p.m.vertical = true;
+
+
+		// if(ray_distance  < sqrt(pow(m->inf->p.m.x - 5 - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle))
+		// {
+
+		// 	if(v_h == 'h')
+		// 		m->inf->p.m.horizontal = true;
+		// 	if(v_h == 'v')
+		// 		m->inf->p.m.vertical = true;
+		// // 	printf("fffffffffffffffrrr\n");
+		// }
+
+			if(v_h == 'h')
+				m->inf->p.m.horizontal = true;
+			if(v_h == 'v')
+				m->inf->p.m.vertical = true;
+		// else if (ray_distance + 3 < sqrt(pow(m->inf->p.m.x + 5 - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle) && v_h == 'v')
+		// 	m->inf->p.m.horizontal = true;
 	}
-	ray_distance = sqrt(pow(m->inf->p.m.x - m->inf->p.stepMoveX, 2) + pow(m->inf->p.m.y - m->inf->p.stepMoveY, 2)) * cos(beta - m->inf->p.rotationAngle);
-	wall_heigth = (WINDOW_WIdTH * PIXEL_CASE)/(2 * (tan(M_PI/6) * ray_distance));
 	texture_selection(m,wall_heigth,s,beta);
 	// draw_wall(m, wall_heigth, s);
 }
