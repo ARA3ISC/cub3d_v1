@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/04 16:41:47 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/28 03:41:43 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/29 03:38:11 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -106,6 +106,7 @@ typedef struct s_texts
 	char	*addr;
 }			t_texts;
 
+
 typedef struct s_infos
 {
 	char		*NO;
@@ -133,6 +134,7 @@ typedef struct s_infos
 }				t_infos;
 
 void			draw_rays(t_mlx_data *m, double beta);
+void texture_selection(t_mlx_data *m, double wall_heigth, int s, double beta);
 
 void			printError(char *msg);
 void			parsing(char *argv, t_infos *infos);
