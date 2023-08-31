@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/06 21:17:31 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/26 08:45:22 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/30 23:50:25 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -157,9 +157,9 @@ void getFileElements(char *mapPath, t_infos *infos)
 
 void parsing(char *argv, t_infos *infos)
 {
-	infos->p.x_startPos = 0;
-	infos->p.y_startPos = 0;
+	infos->p.x_start_pos = 0;
+	infos->p.y_start_pos = 0;
 	checkArg(argv);
 	getFileElements(argv, infos);
-	
+
 }

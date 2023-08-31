@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   playerDetails.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: maneddam <marvin@42>                       +#+  +:+       +#+        */
+/*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/09 15:26:43 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/14 19:25:54 by maneddam         ###   ########.fr       */
+/*   Updated: 2023/08/31 00:02:51 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ t_player	player_pos(char **table_2d)
 			if (table_2d[i][j] == 'N' || table_2d[i][j] == 'E' || table_2d[i][j] == 'W'
 				|| table_2d[i][j] == 'S')
 			{
-				p.x = j;
-				p.y = i;
+				p.x_start_pos = j;
+				p.y_start_pos = i;
 				return (p);
 			}
 			j++;
@@ -82,8 +82,8 @@ void	handlePlayer(char **map2d, t_infos *infos)
 				|| infos->map2d[i][j] == 'W' || infos->map2d[i][j] == 'E')
 			{
 				playerExist++;
-				infos->p.x_startPos = j;
-				infos->p.y_startPos = i;
+				infos->p.x_start_pos = j;
+				infos->p.y_start_pos = i;
 			}
 			j++;
 		}
@@ -92,5 +92,5 @@ void	handlePlayer(char **map2d, t_infos *infos)
 	if (playerExist != 1)
 		printError("It must be just one player");
 	map2d = reFormeMap(map2d, infos);
-	playerPath(infos, map2d, infos->p.x_startPos, infos->p.y_startPos);
+	playerPath(infos, map2d, infos->p.x_start_pos, infos->p.y_start_pos);
 }

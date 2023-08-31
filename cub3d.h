@@ -6,7 +6,7 @@
 /*   By: eej-jama <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/04 16:41:47 by maneddam          #+#    #+#             */
-/*   Updated: 2023/08/29 03:38:11 by eej-jama         ###   ########.fr       */
+/*   Updated: 2023/08/31 22:36:10 by eej-jama         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <unistd.h>
+# include <limits.h>
 
 # define PURPLE "\e[35m"
 # define RESET "\n\033[0m"
@@ -42,11 +43,13 @@
 # define LEFT 65361
 # define UP 126
 # define DOWN 125
-# define SPEED 3
+# define SPEED 5
 # define WINDOW_HEIGHT 700
 # define WINDOW_WIdTH 1300
-# define PIXEL_CASE 60
+# define SQUARE_SIZE 60
 # define MINIMAP_PERCENT 0.2
+# define RAD M_PI/180
+
 
 typedef struct s_point
 {
@@ -54,29 +57,25 @@ typedef struct s_point
 	double y;
 	double x_minimap;
 	double y_minimap;
-	bool vertical;
-	bool horizontal;
 }	t_point;
 
 typedef struct s_player
 {
 	double	x;
 	double	y;
-	double	x_startPos;
-	double	y_startPos;
-	double	x_tmp;
-	double	y_tmp;
-	double stepMoveX;
-	double stepMoveY;
+	double x_position;
+	double y_position;
+
+	int x_start_pos;
+	int y_start_pos;
+
 	double stepMoveX_minimap;
 	double stepMoveY_minimap;
 
 	char direction;
 
-	int x_direction;
-	int y_direction;
 	double rotationAngle;
-	t_point m;
+
 }				t_player;
 
 typedef struct s_mlx_data
@@ -106,7 +105,6 @@ typedef struct s_texts
 	char	*addr;
 }			t_texts;
 
-
 typedef struct s_infos
 {
 	char		*NO;
@@ -130,11 +128,11 @@ typedef struct s_infos
 
 	t_texts		txts[4];
 
-	// int y_len;
+	t_point m_h;
+	t_point m_v;
 }				t_infos;
 
-void			draw_rays(t_mlx_data *m, double beta);
-void texture_selection(t_mlx_data *m, double wall_heigth, int s, double beta);
+// void			draw_rays(t_mlx_data *m. double alpha);
 
 void			printError(char *msg);
 void			parsing(char *argv, t_infos *infos);
@@ -158,10 +156,9 @@ void			invalidForm(char *readLine);
 void			handleMap(char *fullmap, t_infos *infos);
 void			handlePlayer(char **map, t_infos *infos);
 char			**reFormeMap(char **map2d, t_infos *infos);
-void			reycasting(t_infos *inf);
+void			raycasting(t_infos *inf);
 t_player		player_pos(char **table_2d);
-bool 			hasWallat(t_mlx_data *m, double x, double y);
-bool 			hasWallat_for_line(t_mlx_data *m, double x, double y);
+bool	is_wall(t_mlx_data *m, double x, double y);
 int 			rgb_to_hex(int red, int green, int blue);
 void 			get_second_point_for_rays(t_mlx_data *m, int i, double beta);
 void 			draw_rays(t_mlx_data *m, double beta);
@@ -178,14 +175,21 @@ void 			draw_wall(t_mlx_data *m, double wall_heigth, int s, int i);
 void 			get_second_point(t_mlx_data *m, int i, double beta);
 void 			draw_line(t_mlx_data *m, double beta, int s);
 void 			render3d(t_mlx_data *m);
-void			displayMap(t_mlx_data *m, t_infos *inf);
+void			display_map(t_mlx_data *m, t_infos *inf);
 
-
+void	initailize_angle(t_mlx_data *m);
+bool	is_wall_for_ray(t_mlx_data *m, double x, double y);
 
 void	getTextures(t_mlx_data *m);
+double	first_h_inters(t_mlx_data *m, double alpha);
+double	first_v_inters(t_mlx_data *m, double alpha);
+double get_h_dist_to_wall(t_mlx_data *m, double alpha);
+double get_v_dist_to_wall(t_mlx_data *m, double alpha);
 
 
 
+void draw_pixel(t_mlx_data *data, int x, int y, int color);
+void print_ray(t_mlx_data *data, int x0, int y0, int x1, int y1, int color);
 
 
 
